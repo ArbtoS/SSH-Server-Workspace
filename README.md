@@ -5,7 +5,7 @@ Kleine VS-Code-Extension fuer Nutzer, die bereits per Remote-SSH mit einem Linux
 ## Ziel von V1
 
 - Eigener Activity-Bar-Bereich `Server Workspace`
-- Tree Views: `Arbeitsseite`, `System`, `Notizen`
+- Tree Views: `Aktionen`, `Arbeitsseite`, `System`, `Notizen`
 - Remote-Dateien unter `~/.server-workspace/`
 - Commands fuer Initialisierung, Refresh, Notizen und Kommentare
 
@@ -56,6 +56,14 @@ Server Workspace: Aktualisieren
 
 Der Refresh liest Systeminfos, aktualisiert `workspace-data.json`, prueft bekannte getrackte Dateien und refreshed die Views.
 
+Wenn die Arbeitsdaten neu aufgebaut werden sollen:
+
+```text
+Server Workspace: Daten neu erstellen
+```
+
+Dieser Command erstellt `workspace-data.json` neu und leert Arbeitsliste sowie Rohlog. `SYSTEMSTATUS.md` und `NOTIZEN.md` bleiben erhalten.
+
 ### Arbeitsseite
 
 Die View besteht aus:
@@ -63,15 +71,35 @@ Die View besteht aus:
 - `Arbeitsliste`: getrackte Dateien, sortiert nach letzter Aenderung absteigend.
 - `Rohlog`: einfache Logzeilen im Format `Datum Uhrzeit | Pfad`.
 
-Eine Datei wird ueber `Server Workspace: Aktuelle Datei tracken` in die Arbeitsliste aufgenommen. Kontextmenues bieten Oeffnen, Kommentar bearbeiten/loeschen, Pfad kopieren und Metadaten aktualisieren.
+Eine Datei wird ueber `Server Workspace: Aktuelle Datei tracken` in die Arbeitsliste aufgenommen. Fuer Dateien, die im Terminal bearbeitet wurden, gibt es `Server Workspace: Pfad tracken`, z. B. `/etc/systemd/system/hostapd-healthcheck.timer`.
+
+Kontextmenues bieten Oeffnen, Klarname bearbeiten/loeschen, Kommentar bearbeiten/loeschen, Pfad kopieren und Metadaten aktualisieren. Dateien in der Arbeitsliste koennen per Drag & Drop umsortiert werden. Wenn eine bekannte Datei ausserhalb von VS Code geaendert wurde, erfasst `Server Workspace: Aktualisieren` die neuen Metadaten.
+
+Interne Server-Workspace-Dateien wie `NOTIZEN.md`, `SYSTEMSTATUS.md` und `workspace-data.json` werden nicht in der Arbeitsliste angezeigt.
 
 ### System
 
-Zeigt Hostname, OS, Kernel, Architektur, Haupt-IP und letzten Refresh. `SYSTEMSTATUS.md` bleibt eine manuell pflegbare Markdown-Datei fuer Rolle, Zweck und Bemerkungen.
+Zeigt Hostname, OS, Kernel, Architektur, Haupt-IP und letzten Refresh.
 
 ### Notizen
 
-Oeffnet `NOTIZEN.md`.
+Die Notizen-View bietet:
+
+- `Notiz hinzufuegen`: schreibt direkt eine neue Zeile in `NOTIZEN.md`
+- `NOTIZEN.md`: oeffnet die Markdown-Datei zur freien Bearbeitung
+- `SYSTEMSTATUS.md`: oeffnet die manuell pflegbare Datei fuer Rolle, Zweck und Bemerkungen
+- Anzeige der letzten Notizzeilen
+
+### Aktionen
+
+Buendelt die globalen Befehle der Extension, damit Arbeitsseite und System nicht dieselben Buttons doppelt anbieten:
+
+- Initialisieren
+- Aktualisieren
+- Pfad tracken
+- Aktuelle Datei tracken
+- Notiz hinzufuegen
+- Daten neu erstellen
 
 ## Nicht enthalten
 

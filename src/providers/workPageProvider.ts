@@ -5,6 +5,25 @@ import { WorkspaceStore } from "../core/workspaceStore";
 import { CommandItem, MessageItem } from "./commonItems";
 
 type WorkNode = WorkSectionItem | TrackedFileItem | DetailItem | LogEntryItem | MessageItem | CommandItem;
+const trackedFileMime = "application/vnd.server-workspace.tracked-file";
+
+function sortTrackedFiles(files: TrackedFile[]): TrackedFile[] {
+  return [...files].sort((left, right) => {
+    if (typeof left.sortOrder === "number" && typeof right.sortOrder === "number") {
+      return left.sortOrder - right.sortOrder;
+    }
+
+    if (typeof left.sortOrder === "number") {
+      return -1;
+    }
+
+    if (typeof right.sortOrder === "number") {
+      return 1;
+    }
+
+    return compareIsoDesc(left.lastModifiedAt || left.firstSeenAt, right.lastModifiedAt || right.firstSeenAt);
+  });
+}
 
 class WorkSectionItem extends vscode.TreeItem {
   public constructor(public readonly section: "files" | "log", label: string) {
@@ -16,8 +35,8 @@ class WorkSectionItem extends vscode.TreeItem {
 
 export class TrackedFileItem extends vscode.TreeItem {
   public constructor(public readonly file: TrackedFile) {
-    super(file.name, vscode.TreeItemCollapsibleState.Expanded);
-    this.description = file.path;
+    super(file.displayName || file.name, vscode.TreeItemCollapsibleState.Expanded);
+    this.description = file.displayName ? `${file.name}  ${file.path}` : file.path;
     this.contextValue = "trackedFile";
     this.iconPath = new vscode.ThemeIcon(file.exists ? "file" : "warning");
     this.command = {
@@ -29,6 +48,7 @@ export class TrackedFileItem extends vscode.TreeItem {
       [
         `**${file.name}**`,
         "",
+        `Klarname: ${file.displayName || "-"}`,
         `Pfad: \`${file.path}\``,
         `Letzte Aenderung: ${formatDisplayDate(file.lastModifiedAt)}`,
         `${file.owner || "-"}:${file.group || "-"} | ${file.mode || "-"} | ${file.changeCount} Aenderungen`,
@@ -60,7 +80,9 @@ export class LogEntryItem extends vscode.TreeItem {
   }
 }
 
-export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode> {
+export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode>, vscode.TreeDragAndDropController<WorkNode> {
+  public readonly dragMimeTypes = [trackedFileMime];
+  public readonly dropMimeTypes = [trackedFileMime];
   private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<WorkNode | undefined | null | void>();
   public readonly onDidChangeTreeData = this.onDidChangeTreeDataEmitter.event;
 
@@ -79,11 +101,7 @@ export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode> {
       const data = await this.store.load();
       if (!data) {
         return [
-          new MessageItem("Noch nicht initialisiert", "~/.server-workspace/ fehlt"),
-          new CommandItem("Initialisieren", {
-            command: "serverWorkspace.initialize",
-            title: "Initialisieren"
-          })
+          new MessageItem("Noch nicht initialisiert", "Aktionen > Initialisieren")
         ];
       }
 
@@ -92,9 +110,7 @@ export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode> {
       }
 
       if (element instanceof WorkSectionItem && element.section === "files") {
-        const files = [...data.trackedFiles].sort((left, right) =>
-          compareIsoDesc(left.lastModifiedAt || left.firstSeenAt, right.lastModifiedAt || right.firstSeenAt)
-        );
+        const files = sortTrackedFiles(data.trackedFiles);
 
         return files.length > 0 ? files.map((file) => new TrackedFileItem(file)) : [new MessageItem("Keine Dateien getrackt")];
       }
@@ -107,6 +123,7 @@ export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode> {
       if (element instanceof TrackedFileItem) {
         const file = element.file;
         const details = [
+          new DetailItem(`Klarname: ${file.displayName || "-"}`),
           new DetailItem(file.path),
           new DetailItem(`Letzte Aenderung: ${formatDisplayDate(file.lastModifiedAt)}`),
           new DetailItem(`${file.owner || "-"}:${file.group || "-"} | ${file.mode || "-"} | ${file.changeCount} Aenderungen`),
@@ -125,5 +142,67 @@ export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode> {
       const message = error instanceof Error ? error.message : String(error);
       return [new MessageItem("Fehler beim Laden", message)];
     }
+  }
+
+  public handleDrag(source: readonly WorkNode[], dataTransfer: vscode.DataTransfer): void {
+    const paths = source
+      .filter((item): item is TrackedFileItem => item instanceof TrackedFileItem)
+      .map((item) => item.file.path);
+
+    if (paths.length > 0) {
+      dataTransfer.set(trackedFileMime, new vscode.DataTransferItem(JSON.stringify(paths)));
+    }
+  }
+
+  public async handleDrop(target: WorkNode | undefined, dataTransfer: vscode.DataTransfer): Promise<void> {
+    const transferItem = dataTransfer.get(trackedFileMime);
+    if (!transferItem) {
+      return;
+    }
+
+    const rawPaths = await transferItem.asString();
+    const draggedPaths = JSON.parse(rawPaths) as string[];
+    const draggedSet = new Set(draggedPaths);
+    if (draggedSet.size === 0) {
+      return;
+    }
+
+    if (
+      target &&
+      !(target instanceof TrackedFileItem) &&
+      !(target instanceof WorkSectionItem && target.section === "files")
+    ) {
+      return;
+    }
+
+    const data = await this.store.load();
+    if (!data) {
+      return;
+    }
+
+    const current = sortTrackedFiles(data.trackedFiles);
+    const moving = current.filter((file) => draggedSet.has(file.path));
+    if (moving.length === 0) {
+      return;
+    }
+
+    const remaining = current.filter((file) => !draggedSet.has(file.path));
+    const targetIndex =
+      target instanceof TrackedFileItem
+        ? remaining.findIndex((file) => file.path === target.file.path)
+        : remaining.length;
+    const insertIndex = targetIndex >= 0 ? targetIndex : remaining.length;
+    const next = [
+      ...remaining.slice(0, insertIndex),
+      ...moving,
+      ...remaining.slice(insertIndex)
+    ].map((file, index) => ({
+      ...file,
+      sortOrder: index
+    }));
+
+    data.trackedFiles = next;
+    await this.store.save(data);
+    this.refresh();
   }
 }

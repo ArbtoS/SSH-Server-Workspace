@@ -89,6 +89,14 @@ function appendChangeLog(data: WorkspaceData, filePath: string, timestamp: strin
   });
 }
 
+function nextSortOrder(data: WorkspaceData): number {
+  const sortOrders = data.trackedFiles
+    .map((file) => file.sortOrder)
+    .filter((value): value is number => typeof value === "number");
+
+  return sortOrders.length > 0 ? Math.max(...sortOrders) + 1 : data.trackedFiles.length;
+}
+
 export async function updateTrackedFileMetadata(data: WorkspaceData, filePath: string): Promise<TrackedFile> {
   const metadata = await readFileMetadata(filePath);
   const index = findTrackedFileIndex(data, metadata.path);
@@ -102,6 +110,8 @@ export async function updateTrackedFileMetadata(data: WorkspaceData, filePath: s
   const next: TrackedFile = {
     path: metadata.path,
     name: metadata.name,
+    displayName: existing?.displayName,
+    sortOrder: existing?.sortOrder ?? nextSortOrder(data),
     owner: metadata.owner || existing?.owner || "",
     group: metadata.group || existing?.group || "",
     mode: metadata.mode || existing?.mode || "",
@@ -143,6 +153,21 @@ export function setTrackedFileComment(data: WorkspaceData, filePath: string, com
   data.trackedFiles[index] = {
     ...data.trackedFiles[index],
     comment
+  };
+
+  return true;
+}
+
+export function setTrackedFileDisplayName(data: WorkspaceData, filePath: string, displayName: string): boolean {
+  const index = findTrackedFileIndex(data, filePath);
+  if (index < 0) {
+    return false;
+  }
+
+  const trimmedName = displayName.trim();
+  data.trackedFiles[index] = {
+    ...data.trackedFiles[index],
+    displayName: trimmedName || undefined
   };
 
   return true;

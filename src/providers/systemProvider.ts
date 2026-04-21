@@ -2,9 +2,9 @@ import * as vscode from "vscode";
 import { formatDisplayDate } from "../core/dateUtils";
 import { ServerSystemInfo } from "../core/types";
 import { WorkspaceStore } from "../core/workspaceStore";
-import { CommandItem, MessageItem } from "./commonItems";
+import { MessageItem } from "./commonItems";
 
-type SystemNode = InfoItem | MessageItem | CommandItem;
+type SystemNode = InfoItem | MessageItem;
 
 class InfoItem extends vscode.TreeItem {
   public constructor(label: string, value: string) {
@@ -46,25 +46,11 @@ export class SystemProvider implements vscode.TreeDataProvider<SystemNode> {
       const data = await this.store.load();
       if (!data) {
         return [
-          new MessageItem("Noch nicht initialisiert", "~/.server-workspace/ fehlt"),
-          new CommandItem("Initialisieren", {
-            command: "serverWorkspace.initialize",
-            title: "Initialisieren"
-          })
+          new MessageItem("Noch nicht initialisiert", "Aktionen > Initialisieren")
         ];
       }
 
-      return [
-        ...infoItems(data.server),
-        new CommandItem(
-          "SYSTEMSTATUS.md oeffnen",
-          {
-            command: "serverWorkspace.openSystemStatus",
-            title: "SYSTEMSTATUS.md oeffnen"
-          },
-          "markdown"
-        )
-      ];
+      return infoItems(data.server);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return [new MessageItem("Fehler beim Laden", message)];

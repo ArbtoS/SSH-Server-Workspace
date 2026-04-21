@@ -1,5 +1,6 @@
 import { Uri } from "vscode";
-import { exists, ensureDirectory, ensureFile, readJsonFile, writeJsonFile } from "./fileSystem";
+import * as path from "path";
+import { appendTextFile, exists, ensureDirectory, ensureFile, readJsonFile, readTextFile, writeJsonFile } from "./fileSystem";
 import { getServerWorkspacePaths, ServerWorkspacePaths } from "./paths";
 import { notesTemplate, systemStatusTemplate } from "./templates";
 import {
@@ -26,6 +27,21 @@ function normalizeWorkspaceData(raw: Partial<WorkspaceData> | undefined): Worksp
 export class WorkspaceStore {
   public readonly paths: ServerWorkspacePaths = getServerWorkspacePaths();
 
+  public isInternalPath(filePath: string): boolean {
+    const resolvedPath = path.resolve(filePath);
+    return [this.paths.systemStatus, this.paths.notes, this.paths.data].some(
+      (internalPath) => path.resolve(internalPath) === resolvedPath
+    );
+  }
+
+  private sanitize(data: WorkspaceData): WorkspaceData {
+    return {
+      ...data,
+      trackedFiles: data.trackedFiles.filter((file) => !this.isInternalPath(file.path)),
+      changeLog: data.changeLog.filter((entry) => !this.isInternalPath(entry.path))
+    };
+  }
+
   public async isInitialized(): Promise<boolean> {
     return (
       (await exists(this.paths.directory)) &&
@@ -42,17 +58,41 @@ export class WorkspaceStore {
     await ensureFile(this.paths.data, `${JSON.stringify(createDefaultWorkspaceData(), null, 2)}\n`);
   }
 
+  public async recreateData(data: WorkspaceData = createDefaultWorkspaceData()): Promise<void> {
+    await ensureDirectory(this.paths.directory);
+    await this.save(data);
+  }
+
   public async load(): Promise<WorkspaceData | undefined> {
     if (!(await exists(this.paths.data))) {
       return undefined;
     }
 
     const raw = await readJsonFile<Partial<WorkspaceData>>(this.paths.data);
-    return normalizeWorkspaceData(raw);
+    return this.sanitize(normalizeWorkspaceData(raw));
   }
 
   public async save(data: WorkspaceData): Promise<void> {
-    await writeJsonFile(this.paths.data, normalizeWorkspaceData(data));
+    await writeJsonFile(this.paths.data, this.sanitize(normalizeWorkspaceData(data)));
+  }
+
+  public async addNote(note: string): Promise<void> {
+    await ensureFile(this.paths.notes, notesTemplate);
+    await appendTextFile(this.paths.notes, `\n- ${note}\n`);
+  }
+
+  public async readNotes(): Promise<string[]> {
+    if (!(await exists(this.paths.notes))) {
+      return [];
+    }
+
+    const content = await readTextFile(this.paths.notes);
+    return content
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && line !== "# Notizen")
+      .slice(-8)
+      .reverse();
   }
 
   public notesUri(): Uri {

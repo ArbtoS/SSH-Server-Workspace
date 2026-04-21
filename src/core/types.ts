@@ -11,6 +11,8 @@ export interface ServerSystemInfo {
 export interface TrackedFile {
   path: string;
   name: string;
+  displayName?: string;
+  sortOrder?: number;
   owner: string;
   group: string;
   mode: string;

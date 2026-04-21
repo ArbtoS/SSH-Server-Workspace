@@ -2,7 +2,7 @@
   "name": "server-workspace",
   "displayName": "Server Workspace",
   "description": "Kleine Remote-SSH Workspace-Hilfe fuer Systemstatus, Notizen und Datei-Tracking.",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "publisher": "local",
   "private": true,
   "engines": {
@@ -16,15 +16,21 @@
     "workspace"
   ],
   "activationEvents": [
+    "onView:serverWorkspace.actions",
     "onView:serverWorkspace.work",
     "onView:serverWorkspace.system",
     "onView:serverWorkspace.notes",
     "onCommand:serverWorkspace.initialize",
     "onCommand:serverWorkspace.refresh",
+    "onCommand:serverWorkspace.recreateData",
     "onCommand:serverWorkspace.openNotes",
+    "onCommand:serverWorkspace.addNote",
     "onCommand:serverWorkspace.openSystemStatus",
     "onCommand:serverWorkspace.openFile",
     "onCommand:serverWorkspace.trackCurrentFile",
+    "onCommand:serverWorkspace.trackPath",
+    "onCommand:serverWorkspace.editDisplayName",
+    "onCommand:serverWorkspace.clearDisplayName",
     "onCommand:serverWorkspace.editComment",
     "onCommand:serverWorkspace.deleteComment",
     "onCommand:serverWorkspace.copyPath",
@@ -41,8 +47,16 @@
         "title": "Server Workspace: Aktualisieren"
       },
       {
+        "command": "serverWorkspace.recreateData",
+        "title": "Server Workspace: Daten neu erstellen"
+      },
+      {
         "command": "serverWorkspace.openNotes",
         "title": "Server Workspace: Notizen oeffnen"
+      },
+      {
+        "command": "serverWorkspace.addNote",
+        "title": "Server Workspace: Notiz hinzufuegen"
       },
       {
         "command": "serverWorkspace.openSystemStatus",
@@ -55,6 +69,18 @@
       {
         "command": "serverWorkspace.trackCurrentFile",
         "title": "Server Workspace: Aktuelle Datei tracken"
+      },
+      {
+        "command": "serverWorkspace.trackPath",
+        "title": "Server Workspace: Pfad tracken"
+      },
+      {
+        "command": "serverWorkspace.editDisplayName",
+        "title": "Server Workspace: Klarname bearbeiten"
+      },
+      {
+        "command": "serverWorkspace.clearDisplayName",
+        "title": "Server Workspace: Klarname loeschen"
       },
       {
         "command": "serverWorkspace.editComment",
@@ -85,6 +111,10 @@
     "views": {
       "serverWorkspace": [
         {
+          "id": "serverWorkspace.actions",
+          "name": "Aktionen"
+        },
+        {
           "id": "serverWorkspace.work",
           "name": "Arbeitsseite"
         },
@@ -113,30 +143,16 @@
           "when": "false"
         },
         {
+          "command": "serverWorkspace.editDisplayName",
+          "when": "false"
+        },
+        {
+          "command": "serverWorkspace.clearDisplayName",
+          "when": "false"
+        },
+        {
           "command": "serverWorkspace.openSystemStatus",
           "when": "false"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "serverWorkspace.initialize",
-          "when": "view == serverWorkspace.work || view == serverWorkspace.system || view == serverWorkspace.notes",
-          "group": "navigation"
-        },
-        {
-          "command": "serverWorkspace.refresh",
-          "when": "view == serverWorkspace.work || view == serverWorkspace.system",
-          "group": "navigation"
-        },
-        {
-          "command": "serverWorkspace.trackCurrentFile",
-          "when": "view == serverWorkspace.work",
-          "group": "navigation"
-        },
-        {
-          "command": "serverWorkspace.openNotes",
-          "when": "view == serverWorkspace.notes",
-          "group": "navigation"
         }
       ],
       "view/item/context": [
@@ -148,10 +164,20 @@
         {
           "command": "serverWorkspace.editComment",
           "when": "view == serverWorkspace.work && viewItem == trackedFile",
-          "group": "2_edit@1"
+          "group": "2_edit@3"
         },
         {
           "command": "serverWorkspace.deleteComment",
+          "when": "view == serverWorkspace.work && viewItem == trackedFile",
+          "group": "2_edit@4"
+        },
+        {
+          "command": "serverWorkspace.editDisplayName",
+          "when": "view == serverWorkspace.work && viewItem == trackedFile",
+          "group": "2_edit@1"
+        },
+        {
+          "command": "serverWorkspace.clearDisplayName",
           "when": "view == serverWorkspace.work && viewItem == trackedFile",
           "group": "2_edit@2"
         },
@@ -175,12 +201,14 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
+    "package": "vsce package --allow-missing-repository --out server-workspace-0.1.2.vsix",
     "watch": "tsc -watch -p ./",
     "vscode:prepublish": "npm run compile"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
     "@types/vscode": "^1.92.0",
+    "@vscode/vsce": "^3.9.1",
     "typescript": "^5.4.5"
   }
 }

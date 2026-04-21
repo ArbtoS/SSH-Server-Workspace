@@ -1,5 +1,9 @@
 node_modules/
 src/
-*.map
+out/**/*.map
 tsconfig.json
 .vscode-test/
+.vscode/
+.gitignore
+package-lock.json
+server-workspace-*.vsix

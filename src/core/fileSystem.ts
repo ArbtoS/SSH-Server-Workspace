@@ -28,6 +28,15 @@ export async function readJsonFile<T>(filePath: string): Promise<T> {
   return JSON.parse(raw) as T;
 }
 
+export async function readTextFile(filePath: string): Promise<string> {
+  return fs.readFile(filePath, "utf8");
+}
+
+export async function appendTextFile(filePath: string, content: string): Promise<void> {
+  await ensureDirectory(path.dirname(filePath));
+  await fs.appendFile(filePath, content, "utf8");
+}
+
 export async function writeJsonFile(filePath: string, value: unknown): Promise<void> {
   await ensureDirectory(path.dirname(filePath));
   await fs.writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
