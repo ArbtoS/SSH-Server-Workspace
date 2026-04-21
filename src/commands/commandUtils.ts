@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import { SavedServer } from "../core/types";
-import { SavedServerItem } from "../providers/serverProvider";
 import { LogEntryItem, TrackedFileItem } from "../providers/workPageProvider";
 
 export function messageFromError(error: unknown): string {
@@ -48,22 +46,6 @@ export function extractFilePath(input: unknown): string | undefined {
   if (typeof input === "object" && input && "entry" in input) {
     const entry = input.entry as { path?: unknown };
     return typeof entry.path === "string" ? entry.path : undefined;
-  }
-
-  return undefined;
-}
-
-export function extractSavedServer(input: unknown): SavedServer | undefined {
-  if (input instanceof SavedServerItem) {
-    return input.server;
-  }
-
-  if (typeof input === "object" && input && "server" in input) {
-    return input.server as SavedServer;
-  }
-
-  if (typeof input === "object" && input && "host" in input) {
-    return input as SavedServer;
   }
 
   return undefined;

@@ -33,14 +33,6 @@ export interface WorkspaceData {
   changeLog: ChangeLogEntry[];
 }
 
-export interface SavedServer {
-  displayName: string;
-  host: string;
-  user?: string;
-  port?: number;
-  lastUsedAt: string;
-}
-
 export function createEmptySystemInfo(): ServerSystemInfo {
   return {
     hostname: "",

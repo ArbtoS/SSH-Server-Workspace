@@ -5,10 +5,9 @@ Kleine VS-Code-Extension fuer Nutzer, die bereits per Remote-SSH mit einem Linux
 ## Ziel von V1
 
 - Eigener Activity-Bar-Bereich `Server Workspace`
-- Tree Views: `Arbeitsseite`, `System`, `Notizen`, `Server`
+- Tree Views: `Arbeitsseite`, `System`, `Notizen`
 - Remote-Dateien unter `~/.server-workspace/`
-- Lokale Server-Merkliste im VS-Code-Extension-State
-- Commands fuer Initialisierung, Refresh, Notizen, Kommentare und Serverdaten
+- Commands fuer Initialisierung, Refresh, Notizen und Kommentare
 
 ## Entwicklung
 
@@ -74,14 +73,6 @@ Zeigt Hostname, OS, Kernel, Architektur, Haupt-IP und letzten Refresh. `SYSTEMST
 
 Oeffnet `NOTIZEN.md`.
 
-### Server
+## Nicht enthalten
 
-Speichert eine kleine Merkliste fuer SSH-Daten:
-
-- Anzeigename
-- Host/IP
-- User optional
-- Port optional
-- letzter Nutzungszeitpunkt
-
-Die Extension startet daraus keine SSH-Verbindung.
+Die Extension speichert keine SSH-Hosts. Dafuer bleibt der VS-Code Remote Explorer bzw. Remote-SSH zustaendig.

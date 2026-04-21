@@ -1,7 +1,7 @@
 {
   "name": "server-workspace",
   "displayName": "Server Workspace",
-  "description": "Kleine Remote-SSH Workspace-Hilfe fuer Systemstatus, Notizen, Datei-Tracking und Server-Merkliste.",
+  "description": "Kleine Remote-SSH Workspace-Hilfe fuer Systemstatus, Notizen und Datei-Tracking.",
   "version": "0.1.0",
   "publisher": "local",
   "private": true,
@@ -19,7 +19,6 @@
     "onView:serverWorkspace.work",
     "onView:serverWorkspace.system",
     "onView:serverWorkspace.notes",
-    "onView:serverWorkspace.servers",
     "onCommand:serverWorkspace.initialize",
     "onCommand:serverWorkspace.refresh",
     "onCommand:serverWorkspace.openNotes",
@@ -29,10 +28,7 @@
     "onCommand:serverWorkspace.editComment",
     "onCommand:serverWorkspace.deleteComment",
     "onCommand:serverWorkspace.copyPath",
-    "onCommand:serverWorkspace.updateMetadata",
-    "onCommand:serverWorkspace.copyHost",
-    "onCommand:serverWorkspace.saveCurrentServer",
-    "onCommand:serverWorkspace.renameServer"
+    "onCommand:serverWorkspace.updateMetadata"
   ],
   "contributes": {
     "commands": [
@@ -75,18 +71,6 @@
       {
         "command": "serverWorkspace.updateMetadata",
         "title": "Server Workspace: Metadaten aktualisieren"
-      },
-      {
-        "command": "serverWorkspace.copyHost",
-        "title": "Server Workspace: Host/IP kopieren"
-      },
-      {
-        "command": "serverWorkspace.saveCurrentServer",
-        "title": "Server Workspace: Server speichern"
-      },
-      {
-        "command": "serverWorkspace.renameServer",
-        "title": "Server Workspace: Anzeigename bearbeiten"
       }
     ],
     "viewsContainers": {
@@ -111,10 +95,6 @@
         {
           "id": "serverWorkspace.notes",
           "name": "Notizen"
-        },
-        {
-          "id": "serverWorkspace.servers",
-          "name": "Server"
         }
       ]
     },
@@ -134,10 +114,6 @@
         },
         {
           "command": "serverWorkspace.openSystemStatus",
-          "when": "false"
-        },
-        {
-          "command": "serverWorkspace.renameServer",
           "when": "false"
         }
       ],
@@ -160,11 +136,6 @@
         {
           "command": "serverWorkspace.openNotes",
           "when": "view == serverWorkspace.notes",
-          "group": "navigation"
-        },
-        {
-          "command": "serverWorkspace.saveCurrentServer",
-          "when": "view == serverWorkspace.servers",
           "group": "navigation"
         }
       ],
@@ -198,21 +169,6 @@
           "command": "serverWorkspace.openFile",
           "when": "view == serverWorkspace.work && viewItem == logEntry",
           "group": "inline@1"
-        },
-        {
-          "command": "serverWorkspace.copyHost",
-          "when": "view == serverWorkspace.servers && viewItem == savedServer",
-          "group": "inline@1"
-        },
-        {
-          "command": "serverWorkspace.saveCurrentServer",
-          "when": "view == serverWorkspace.servers && viewItem == savedServer",
-          "group": "2_edit@1"
-        },
-        {
-          "command": "serverWorkspace.renameServer",
-          "when": "view == serverWorkspace.servers && viewItem == savedServer",
-          "group": "2_edit@2"
         }
       ]
     }
