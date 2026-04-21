@@ -1,26 +1,63 @@
+const displayTimeZone = "Europe/Berlin";
+
 function pad(value: number): string {
   return String(value).padStart(2, "0");
 }
 
+function getZonedDateParts(date: Date): Record<string, string> {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: displayTimeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23"
+  });
+
+  return Object.fromEntries(
+    formatter
+      .formatToParts(date)
+      .filter((part) => part.type !== "literal")
+      .map((part) => [part.type, part.value])
+  );
+}
+
+function getBerlinOffsetMinutes(date: Date): number {
+  const parts = getZonedDateParts(date);
+  const zonedUtc = Date.UTC(
+    Number(parts.year),
+    Number(parts.month) - 1,
+    Number(parts.day),
+    Number(parts.hour),
+    Number(parts.minute),
+    Number(parts.second)
+  );
+
+  return Math.round((zonedUtc - date.getTime()) / 60000);
+}
+
 export function toLocalIsoString(date = new Date()): string {
-  const offsetMinutes = -date.getTimezoneOffset();
+  const parts = getZonedDateParts(date);
+  const offsetMinutes = getBerlinOffsetMinutes(date);
   const sign = offsetMinutes >= 0 ? "+" : "-";
   const absOffset = Math.abs(offsetMinutes);
   const offsetHours = Math.floor(absOffset / 60);
   const offsetRemainder = absOffset % 60;
 
   return [
-    date.getFullYear(),
+    parts.year,
     "-",
-    pad(date.getMonth() + 1),
+    parts.month,
     "-",
-    pad(date.getDate()),
+    parts.day,
     "T",
-    pad(date.getHours()),
+    parts.hour,
     ":",
-    pad(date.getMinutes()),
+    parts.minute,
     ":",
-    pad(date.getSeconds()),
+    parts.second,
     sign,
     pad(offsetHours),
     ":",
@@ -39,12 +76,14 @@ export function formatDisplayDate(value: string | undefined, includeSeconds = fa
   }
 
   const datePart = new Intl.DateTimeFormat("de-DE", {
+    timeZone: displayTimeZone,
     day: "2-digit",
     month: "2-digit",
     year: "numeric"
   }).format(date);
 
   const timePart = new Intl.DateTimeFormat("de-DE", {
+    timeZone: displayTimeZone,
     hour: "2-digit",
     minute: "2-digit",
     second: includeSeconds ? "2-digit" : undefined,
@@ -52,6 +91,7 @@ export function formatDisplayDate(value: string | undefined, includeSeconds = fa
   }).format(date);
 
   const zonePart = new Intl.DateTimeFormat("de-DE", {
+    timeZone: displayTimeZone,
     timeZoneName: "short"
   })
     .formatToParts(date)
