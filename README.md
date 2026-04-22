@@ -8,23 +8,23 @@ This project was developed with support from ChatGPT. The extension scope, behav
 
 ### Überblick
 
-SSH Server Workspace ist eine kleine VS-Code-Extension fuer Remote-SSH-Workspaces. Sie hilft dabei, wichtige Serverdateien bewusst zu tracken, einfache Systeminfos zu sehen und Notizen direkt auf dem verbundenen Server abzulegen.
+SSH Server Workspace ist eine kleine VS-Code-Extension für Remote-SSH-Workspaces. Sie hilft dabei, wichtige Serverdateien bewusst zu tracken, einfache Systeminfos zu sehen und Notizen direkt auf dem verbundenen Server abzulegen.
 
-Die Extension laeuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt fuer Verbindung, Authentifizierung und Host-Verwaltung zustaendig.
+Die Extension läuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt für Verbindung, Authentifizierung und Host-Verwaltung zuständig.
 
 ### Funktionen
 
 - Eigener Activity-Bar-Bereich `SSH Server Workspace`
 - Views: `Aktionen`, `Arbeitsseite`, `System`, `Notizen`
 - Initialisierung von `~/.ssh-server-workspace/` auf dem Remote-Host
-- Datei-Tracking fuer bewusst ausgewaehlte Serverdateien
+- Datei-Tracking für bewusst ausgewählte Serverdateien
 - Klarname und Kommentar pro getrackter Datei
 - Drag-and-Drop-Sortierung in der Arbeitsliste
-- Rohlog fuer erkannte Aenderungen an getrackten Dateien
+- Rohlog für erkannte Änderungen an getrackten Dateien
 - Systeminfos wie Hostname, OS, Kernel, Architektur und Haupt-IP
 - Notizen in `NOTIZEN.md`
 - Manuell pflegbarer Systemstatus in `SYSTEMSTATUS.md`
-- Sprachumschaltung Deutsch/Englisch ueber `sshServerWorkspace.language`
+- Sprachumschaltung Deutsch/Englisch über `sshServerWorkspace.language`
 
 ### Nicht enthalten
 
@@ -36,7 +36,7 @@ Die Extension laeuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt 
 - Kein Cockpit-Ersatz
 - Kein automatisches Tracking beliebiger Terminal-Edits
 
-Dateien, die mit `nano`, `vim`, `cat > file` oder `sudo` im Terminal bearbeitet werden, werden nicht automatisch entdeckt. Sobald eine Datei einmal getrackt ist, kann `Aktualisieren` ihre Metadaten und Aenderungen erfassen.
+Dateien, die mit `nano`, `vim`, `cat > file` oder `sudo` im Terminal bearbeitet werden, werden nicht automatisch entdeckt. Sobald eine Datei einmal getrackt ist, kann `Aktualisieren` ihre Metadaten und Änderungen erfassen.
 
 ### Remote-Dateien
 
@@ -58,13 +58,13 @@ Vor dem Command `SSH Server Workspace: Initialisieren` wird nichts auf dem Serve
 
 #### Aktionen
 
-Buendelt die globalen Befehle:
+Bündelt die globalen Befehle:
 
 - Initialisieren
 - Aktualisieren
 - Pfad tracken
 - Aktuelle Datei tracken
-- Notiz hinzufuegen
+- Notiz hinzufügen
 - Daten neu erstellen
 
 #### Arbeitsseite
@@ -72,14 +72,14 @@ Buendelt die globalen Befehle:
 Die Arbeitsseite besteht aus:
 
 - `Arbeitsliste`: bewusst getrackte Dateien
-- `Rohlog`: erkannte Aenderungen im Format `Datum Uhrzeit | Pfad`
+- `Rohlog`: erkannte Änderungen im Format `Datum Uhrzeit | Pfad`
 
 Eine Datei kann auf zwei Wegen aufgenommen werden:
 
 - `Aktuelle Datei tracken`: trackt die Datei, die gerade im VS-Code-Editor aktiv ist
 - `Pfad tracken`: nimmt einen absoluten Remote-Pfad auf, zum Beispiel `/etc/systemd/system/hostapd-healthcheck.timer`
 
-Pro getrackter Datei koennen Klarname und Kommentar gepflegt werden. Die Arbeitsliste kann per Drag and Drop manuell sortiert werden. Interne Server-Workspace-Dateien wie `NOTIZEN.md`, `SYSTEMSTATUS.md` und `workspace-data.json` werden nicht in der Arbeitsliste angezeigt.
+Pro getrackter Datei können Klarname und Kommentar gepflegt werden. Die Arbeitsliste kann per Drag and Drop manuell sortiert werden. Interne Server-Workspace-Dateien wie `NOTIZEN.md`, `SYSTEMSTATUS.md` und `workspace-data.json` werden nicht in der Arbeitsliste angezeigt.
 
 #### System
 
@@ -97,14 +97,14 @@ Zeigt einfache Systeminfos:
 
 Die Notizen-View bietet:
 
-- `Notiz hinzufuegen`: schreibt eine neue Zeile in `NOTIZEN.md`
-- `NOTIZEN.md`: oeffnet die Notizdatei zur freien Bearbeitung
-- `SYSTEMSTATUS.md`: oeffnet die Datei fuer Rolle, Zweck und Bemerkungen
+- `Notiz hinzufügen`: schreibt eine neue Zeile in `NOTIZEN.md`
+- `NOTIZEN.md`: öffnet die Notizdatei zur freien Bearbeitung
+- `SYSTEMSTATUS.md`: öffnet die Datei für Rolle, Zweck und Bemerkungen
 - Anzeige der letzten Notizzeilen
 
 ### Installation zum Testen
 
-Abhaengigkeiten installieren und kompilieren:
+Abhängigkeiten installieren und kompilieren:
 
 ```powershell
 npm install
@@ -119,11 +119,11 @@ npm run package
 
 Danach im Remote-SSH-Fenster:
 
-1. `Extensions: Install from VSIX...` ausfuehren.
-2. Die erzeugte Datei `ssh-server-workspace-*.vsix` auswaehlen.
-3. `Developer: Reload Window` ausfuehren.
-4. In der Activity Bar `SSH Server Workspace` oeffnen.
-5. In `Aktionen` den Command `Initialisieren` ausfuehren.
+1. `Extensions: Install from VSIX...` ausführen.
+2. Die erzeugte Datei `ssh-server-workspace-*.vsix` auswählen.
+3. `Developer: Reload Window` ausführen.
+4. In der Activity Bar `SSH Server Workspace` öffnen.
+5. In `Aktionen` den Command `Initialisieren` ausführen.
 
 ### Sprache umschalten
 
@@ -133,12 +133,12 @@ Die Extension bringt eine eigene Einstellung mit:
 "sshServerWorkspace.language": "de"
 ```
 
-Moegliche Werte:
+Mögliche Werte:
 
 - `de`: Deutsch
 - `en`: English
 
-Die Einstellung wirkt auf Tree-View-Inhalte, Eingabedialoge und Benachrichtigungen der Extension. VS-Code-Manifest-Texte wie View-Namen und Command-Palette-Titel sind statisch und koennen von VS Code nicht vollstaendig zur Laufzeit ueber eine Extension-eigene Einstellung umgeschaltet werden.
+Die Einstellung wirkt auf Tree-View-Inhalte, Eingabedialoge und Benachrichtigungen der Extension. VS-Code-Manifest-Texte wie View-Namen und Command-Palette-Titel sind statisch und können von VS Code nicht vollständig zur Laufzeit über eine Extension-eigene Einstellung umgeschaltet werden.
 
 ### Entwicklung
 
@@ -154,11 +154,11 @@ Die Extension ist als Workspace-Extension konfiguriert:
 "extensionKind": ["workspace"]
 ```
 
-Damit ist sie fuer den Einsatz im Remote-SSH-Workspace gedacht.
+Damit ist sie für den Einsatz im Remote-SSH-Workspace gedacht.
 
-### KI-Unterstuetzung
+### KI-Unterstützung
 
-ChatGPT war an Planung, Code-Erstellung und Iteration dieser Extension beteiligt. Der Einsatz von ChatGPT ist hier transparent dokumentiert; die Extension bleibt ein normales, pruefbares Open-Source-Projekt.
+ChatGPT war an Planung, Code-Erstellung und Iteration dieser Extension beteiligt. Der Einsatz von ChatGPT ist hier transparent dokumentiert; die Extension bleibt ein normales, prüfbares Open-Source-Projekt.
 
 ---
 
@@ -220,7 +220,7 @@ Collects global commands:
 - Aktualisieren (refresh)
 - Pfad tracken (track path)
 - Aktuelle Datei tracken (track current file)
-- Notiz hinzufuegen (add note)
+- Notiz hinzufügen (add note)
 - Daten neu erstellen (recreate data)
 
 #### Arbeitsseite
@@ -253,7 +253,7 @@ Shows basic system information:
 
 The notes view offers:
 
-- `Notiz hinzufuegen`: appends a new line to `NOTIZEN.md`
+- `Notiz hinzufügen`: appends a new line to `NOTIZEN.md`
 - `NOTIZEN.md`: opens the notes file for manual editing
 - `SYSTEMSTATUS.md`: opens the file for role, purpose, and remarks
 - A preview of the latest note lines
