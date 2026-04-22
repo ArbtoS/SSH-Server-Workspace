@@ -2,7 +2,8 @@
 
 ## 0.2.0
 
-- Added `serverWorkspace.language` setting for German/English tree view labels, prompts, and notifications.
+- Renamed the extension, command namespace, settings, icon asset, package output, and remote data directory to SSH Server Workspace.
+- Added `sshServerWorkspace.language` setting for German/English tree view labels, prompts, and notifications.
 - Added Marketplace/GitHub-ready package metadata.
 - Added MIT license.
 
@@ -15,10 +16,10 @@
 
 - Added dedicated `Aktionen` view for global commands.
 - Moved `SYSTEMSTATUS.md` access into the notes view.
-- Hid internal Server Workspace files from the work list and raw log.
+- Hid internal SSH Server Workspace files from the work list and raw log.
 
 ## 0.1.0
 
 - Initial V1 scaffold.
-- Added Remote-SSH workspace initialization under `~/.server-workspace/`.
+- Added Remote-SSH workspace initialization under `~/.ssh-server-workspace/`.
 - Added work page, system info, notes, file tracking, comments, display names, and VSIX packaging.

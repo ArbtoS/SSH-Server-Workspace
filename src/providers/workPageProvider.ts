@@ -6,7 +6,7 @@ import { WorkspaceStore } from "../core/workspaceStore";
 import { CommandItem, MessageItem } from "./commonItems";
 
 type WorkNode = WorkSectionItem | TrackedFileItem | DetailItem | LogEntryItem | MessageItem | CommandItem;
-const trackedFileMime = "application/vnd.server-workspace.tracked-file";
+const trackedFileMime = "application/vnd.ssh-server-workspace.tracked-file";
 
 function sortTrackedFiles(files: TrackedFile[]): TrackedFile[] {
   return [...files].sort((left, right) => {
@@ -41,7 +41,7 @@ export class TrackedFileItem extends vscode.TreeItem {
     this.contextValue = "trackedFile";
     this.iconPath = new vscode.ThemeIcon(file.exists ? "file" : "warning");
     this.command = {
-      command: "serverWorkspace.openFile",
+      command: "sshServerWorkspace.openFile",
       title: t("open"),
       arguments: [file.path]
     };
@@ -73,7 +73,7 @@ export class LogEntryItem extends vscode.TreeItem {
     this.contextValue = "logEntry";
     this.iconPath = new vscode.ThemeIcon("history");
     this.command = {
-      command: "serverWorkspace.openFile",
+      command: "sshServerWorkspace.openFile",
       title: t("open"),
       arguments: [entry.path]
     };

@@ -44,19 +44,19 @@ export function registerCommands(
     }
   };
 
-  registerSafeCommand(context, "serverWorkspace.initialize", () => initializeWorkspace(store, views));
-  registerSafeCommand(context, "serverWorkspace.refresh", () => refreshWorkspace(store, views));
-  registerSafeCommand(context, "serverWorkspace.recreateData", () => recreateWorkspaceData(store, views));
-  registerSafeCommand(context, "serverWorkspace.openNotes", () => openNotes(store));
-  registerSafeCommand(context, "serverWorkspace.addNote", () => addNote(store, views));
-  registerSafeCommand(context, "serverWorkspace.openSystemStatus", () => openSystemStatus(store));
-  registerSafeCommand(context, "serverWorkspace.openFile", (input) => openTrackedFile(store, views, input));
-  registerSafeCommand(context, "serverWorkspace.trackCurrentFile", () => trackCurrentFile(store, views));
-  registerSafeCommand(context, "serverWorkspace.trackPath", () => trackPath(store, views));
-  registerSafeCommand(context, "serverWorkspace.editDisplayName", (input) => editDisplayName(store, views, input));
-  registerSafeCommand(context, "serverWorkspace.clearDisplayName", (input) => clearDisplayName(store, views, input));
-  registerSafeCommand(context, "serverWorkspace.editComment", (input) => editComment(store, views, input));
-  registerSafeCommand(context, "serverWorkspace.deleteComment", (input) => deleteComment(store, views, input));
-  registerSafeCommand(context, "serverWorkspace.copyPath", (input) => copyPath(input));
-  registerSafeCommand(context, "serverWorkspace.updateMetadata", (input) => updateMetadata(store, views, input));
+  registerSafeCommand(context, "sshServerWorkspace.initialize", () => initializeWorkspace(store, views));
+  registerSafeCommand(context, "sshServerWorkspace.refresh", () => refreshWorkspace(store, views));
+  registerSafeCommand(context, "sshServerWorkspace.recreateData", () => recreateWorkspaceData(store, views));
+  registerSafeCommand(context, "sshServerWorkspace.openNotes", () => openNotes(store));
+  registerSafeCommand(context, "sshServerWorkspace.addNote", () => addNote(store, views));
+  registerSafeCommand(context, "sshServerWorkspace.openSystemStatus", () => openSystemStatus(store));
+  registerSafeCommand(context, "sshServerWorkspace.openFile", (input) => openTrackedFile(store, views, input));
+  registerSafeCommand(context, "sshServerWorkspace.trackCurrentFile", () => trackCurrentFile(store, views));
+  registerSafeCommand(context, "sshServerWorkspace.trackPath", () => trackPath(store, views));
+  registerSafeCommand(context, "sshServerWorkspace.editDisplayName", (input) => editDisplayName(store, views, input));
+  registerSafeCommand(context, "sshServerWorkspace.clearDisplayName", (input) => clearDisplayName(store, views, input));
+  registerSafeCommand(context, "sshServerWorkspace.editComment", (input) => editComment(store, views, input));
+  registerSafeCommand(context, "sshServerWorkspace.deleteComment", (input) => deleteComment(store, views, input));
+  registerSafeCommand(context, "sshServerWorkspace.copyPath", (input) => copyPath(input));
+  registerSafeCommand(context, "sshServerWorkspace.updateMetadata", (input) => updateMetadata(store, views, input));
 }

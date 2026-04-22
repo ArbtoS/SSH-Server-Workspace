@@ -32,10 +32,10 @@ const translations = {
     architecture: "Architektur",
     mainIp: "Haupt-IP",
     lastRefresh: "Letzter Refresh",
-    warningNotInitialized: "Server Workspace ist noch nicht initialisiert.",
-    warningInitializeFirst: "Bitte zuerst Server Workspace initialisieren.",
-    initialized: "Server Workspace wurde initialisiert: {path}",
-    refreshed: "Server Workspace wurde aktualisiert.",
+    warningNotInitialized: "SSH Server Workspace ist noch nicht initialisiert.",
+    warningInitializeFirst: "Bitte zuerst SSH Server Workspace initialisieren.",
+    initialized: "SSH Server Workspace wurde initialisiert: {path}",
+    refreshed: "SSH Server Workspace wurde aktualisiert.",
     recreateQuestion:
       "workspace-data.json neu erstellen? Arbeitsliste und Rohlog werden geloescht. SYSTEMSTATUS.md und NOTIZEN.md bleiben erhalten.",
     recreateConfirm: "Neu erstellen",
@@ -90,10 +90,10 @@ const translations = {
     architecture: "Architecture",
     mainIp: "Main IP",
     lastRefresh: "Last refresh",
-    warningNotInitialized: "Server Workspace is not initialized yet.",
-    warningInitializeFirst: "Please initialize Server Workspace first.",
-    initialized: "Server Workspace initialized: {path}",
-    refreshed: "Server Workspace refreshed.",
+    warningNotInitialized: "SSH Server Workspace is not initialized yet.",
+    warningInitializeFirst: "Please initialize SSH Server Workspace first.",
+    initialized: "SSH Server Workspace initialized: {path}",
+    refreshed: "SSH Server Workspace refreshed.",
     recreateQuestion:
       "Recreate workspace-data.json? Work list and raw log will be deleted. SYSTEMSTATUS.md and NOTIZEN.md will be kept.",
     recreateConfirm: "Recreate",
@@ -105,7 +105,7 @@ const translations = {
     noPathSelected: "No path selected.",
     fileNoLongerExists: "File no longer exists: {path}",
     noEditorFile: "No local remote file in the active editor.",
-    internalFileNotTracked: "Internal Server Workspace files are not tracked in the work list.",
+    internalFileNotTracked: "Internal SSH Server Workspace files are not tracked in the work list.",
     fileTracked: "File is tracked: {path}",
     trackPathPrompt: "Absolute path on the connected remote host",
     pathRequired: "Path is required.",
@@ -124,7 +124,7 @@ const translations = {
 type TranslationKey = keyof typeof translations.de;
 
 export function getLanguage(): Language {
-  const configured = vscode.workspace.getConfiguration("serverWorkspace").get<string>("language", "de");
+  const configured = vscode.workspace.getConfiguration("sshServerWorkspace").get<string>("language", "de");
   return configured === "en" ? "en" : "de";
 }
 

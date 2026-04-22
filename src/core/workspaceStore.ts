@@ -1,7 +1,7 @@
 import { Uri } from "vscode";
 import * as path from "path";
 import { appendTextFile, exists, ensureDirectory, ensureFile, readJsonFile, readTextFile, writeJsonFile } from "./fileSystem";
-import { getServerWorkspacePaths, ServerWorkspacePaths } from "./paths";
+import { getSshServerWorkspacePaths, SshServerWorkspacePaths } from "./paths";
 import { notesTemplate, systemStatusTemplate } from "./templates";
 import {
   createDefaultWorkspaceData,
@@ -25,7 +25,7 @@ function normalizeWorkspaceData(raw: Partial<WorkspaceData> | undefined): Worksp
 }
 
 export class WorkspaceStore {
-  public readonly paths: ServerWorkspacePaths = getServerWorkspacePaths();
+  public readonly paths: SshServerWorkspacePaths = getSshServerWorkspacePaths();
 
   public isInternalPath(filePath: string): boolean {
     const resolvedPath = path.resolve(filePath);

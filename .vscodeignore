@@ -6,4 +6,4 @@ tsconfig.json
 .vscode/
 .gitignore
 package-lock.json
-server-workspace-*.vsix
+ssh-server-workspace-*.vsix

@@ -1,8 +1,8 @@
-# Server Workspace
+# SSH Server Workspace
 
 [Deutsch](#deutsch) | [English](#english)
 
-Server Workspace is a small Visual Studio Code extension for users who are already connected to a Linux server through VS Code Remote-SSH. It does not create SSH connections, manage SSH hosts, or edit SSH configuration files.
+SSH Server Workspace is a small Visual Studio Code extension for users who are already connected to a Linux server through VS Code Remote-SSH. It does not create SSH connections, manage SSH hosts, or edit SSH configuration files.
 
 This project was developed with support from ChatGPT. The extension scope, behavior, and final code decisions remain project-owned and reviewable in this repository.
 
@@ -12,15 +12,15 @@ This project was developed with support from ChatGPT. The extension scope, behav
 
 ### Ueberblick
 
-Server Workspace ist eine kleine VS-Code-Extension fuer Remote-SSH-Workspaces. Sie hilft dabei, wichtige Serverdateien bewusst zu tracken, einfache Systeminfos zu sehen und Notizen direkt auf dem verbundenen Server abzulegen.
+SSH Server Workspace ist eine kleine VS-Code-Extension fuer Remote-SSH-Workspaces. Sie hilft dabei, wichtige Serverdateien bewusst zu tracken, einfache Systeminfos zu sehen und Notizen direkt auf dem verbundenen Server abzulegen.
 
 Die Extension laeuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt fuer Verbindung, Authentifizierung und Host-Verwaltung zustaendig.
 
 ### Funktionen
 
-- Eigener Activity-Bar-Bereich `Server Workspace`
+- Eigener Activity-Bar-Bereich `SSH Server Workspace`
 - Views: `Aktionen`, `Arbeitsseite`, `System`, `Notizen`
-- Initialisierung von `~/.server-workspace/` auf dem Remote-Host
+- Initialisierung von `~/.ssh-server-workspace/` auf dem Remote-Host
 - Datei-Tracking fuer bewusst ausgewaehlte Serverdateien
 - Klarname und Kommentar pro getrackter Datei
 - Drag-and-Drop-Sortierung in der Arbeitsliste
@@ -28,7 +28,7 @@ Die Extension laeuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt 
 - Systeminfos wie Hostname, OS, Kernel, Architektur und Haupt-IP
 - Notizen in `NOTIZEN.md`
 - Manuell pflegbarer Systemstatus in `SYSTEMSTATUS.md`
-- Sprachumschaltung Deutsch/Englisch ueber `serverWorkspace.language`
+- Sprachumschaltung Deutsch/Englisch ueber `sshServerWorkspace.language`
 
 ### Nicht enthalten
 
@@ -47,7 +47,7 @@ Dateien, die mit `nano`, `vim`, `cat > file` oder `sudo` im Terminal bearbeitet 
 Beim Initialisieren legt die Extension auf dem verbundenen Remote-Host diesen Ordner an:
 
 ```text
-~/.server-workspace/
+~/.ssh-server-workspace/
 ```
 
 Darin liegen:
@@ -58,7 +58,7 @@ NOTIZEN.md
 workspace-data.json
 ```
 
-Vor dem Command `Server Workspace: Initialisieren` wird nichts auf dem Server angelegt.
+Vor dem Command `SSH Server Workspace: Initialisieren` wird nichts auf dem Server angelegt.
 
 ### Views
 
@@ -126,9 +126,9 @@ npm run package
 Danach im Remote-SSH-Fenster:
 
 1. `Extensions: Install from VSIX...` ausfuehren.
-2. Die erzeugte Datei `server-workspace-*.vsix` auswaehlen.
+2. Die erzeugte Datei `ssh-server-workspace-*.vsix` auswaehlen.
 3. `Developer: Reload Window` ausfuehren.
-4. In der Activity Bar `Server Workspace` oeffnen.
+4. In der Activity Bar `SSH Server Workspace` oeffnen.
 5. In `Aktionen` den Command `Initialisieren` ausfuehren.
 
 ### Sprache umschalten
@@ -136,7 +136,7 @@ Danach im Remote-SSH-Fenster:
 Die Extension bringt eine eigene Einstellung mit:
 
 ```json
-"serverWorkspace.language": "de"
+"sshServerWorkspace.language": "de"
 ```
 
 Moegliche Werte:
@@ -170,7 +170,7 @@ Das Projekt ist als normale VS-Code-Extension paketierbar:
 npm run package
 ```
 
-Die erzeugte Datei `server-workspace-*.vsix` kann lokal oder in einem Remote-SSH-Fenster installiert werden.
+Die erzeugte Datei `ssh-server-workspace-*.vsix` kann lokal oder in einem Remote-SSH-Fenster installiert werden.
 
 Fuer eine Veroeffentlichung im Visual Studio Marketplace muss der Wert `publisher` in `package.json` zu einem registrierten Marketplace-Publisher passen.
 
@@ -184,15 +184,15 @@ ChatGPT war an Planung, Code-Erstellung und Iteration dieser Extension beteiligt
 
 ### Overview
 
-Server Workspace is a small VS Code extension for Remote-SSH workspaces. It helps users deliberately track important server files, view basic system information, and keep notes directly on the connected server.
+SSH Server Workspace is a small VS Code extension for Remote-SSH workspaces. It helps users deliberately track important server files, view basic system information, and keep notes directly on the connected server.
 
 The extension runs inside an already connected remote workspace. VS Code Remote-SSH remains responsible for connection handling, authentication, and host management.
 
 ### Features
 
-- Dedicated `Server Workspace` Activity Bar container
+- Dedicated `SSH Server Workspace` Activity Bar container
 - Views: `Aktionen` (Actions), `Arbeitsseite` (Work Page), `System`, `Notizen` (Notes)
-- Initializes `~/.server-workspace/` on the remote host
+- Initializes `~/.ssh-server-workspace/` on the remote host
 - File tracking for deliberately selected server files
 - Display name and comment per tracked file
 - Drag-and-drop ordering in the work list
@@ -200,7 +200,7 @@ The extension runs inside an already connected remote workspace. VS Code Remote-
 - System information such as hostname, OS, kernel, architecture, and main IP
 - Notes in `NOTIZEN.md`
 - Manually maintained system status in `SYSTEMSTATUS.md`
-- German/English language switch through `serverWorkspace.language`
+- German/English language switch through `sshServerWorkspace.language`
 
 ### Not Included
 
@@ -219,7 +219,7 @@ Files edited through `nano`, `vim`, `cat > file`, or `sudo` in a terminal are no
 Initialization creates this folder on the connected remote host:
 
 ```text
-~/.server-workspace/
+~/.ssh-server-workspace/
 ```
 
 It contains:
@@ -230,7 +230,7 @@ NOTIZEN.md
 workspace-data.json
 ```
 
-No server-side files are created before running `Server Workspace: Initialisieren`.
+No server-side files are created before running `SSH Server Workspace: Initialisieren`.
 
 ### Views
 
@@ -257,7 +257,7 @@ A file can be added in two ways:
 - `Aktuelle Datei tracken`: tracks the file currently active in the VS Code editor
 - `Pfad tracken`: tracks an absolute remote path, for example `/etc/systemd/system/hostapd-healthcheck.timer`
 
-Each tracked file can have a display name and a comment. The work list can be manually sorted with drag and drop. Internal Server Workspace files such as `NOTIZEN.md`, `SYSTEMSTATUS.md`, and `workspace-data.json` are hidden from the work list.
+Each tracked file can have a display name and a comment. The work list can be manually sorted with drag and drop. Internal SSH Server Workspace files such as `NOTIZEN.md`, `SYSTEMSTATUS.md`, and `workspace-data.json` are hidden from the work list.
 
 #### System
 
@@ -298,9 +298,9 @@ npm run package
 Then, in the Remote-SSH window:
 
 1. Run `Extensions: Install from VSIX...`.
-2. Select the generated `server-workspace-*.vsix` file.
+2. Select the generated `ssh-server-workspace-*.vsix` file.
 3. Run `Developer: Reload Window`.
-4. Open `Server Workspace` in the Activity Bar.
+4. Open `SSH Server Workspace` in the Activity Bar.
 5. Run `Initialisieren` from the `Aktionen` view.
 
 ### Language Setting
@@ -308,7 +308,7 @@ Then, in the Remote-SSH window:
 The extension provides its own setting:
 
 ```json
-"serverWorkspace.language": "en"
+"sshServerWorkspace.language": "en"
 ```
 
 Supported values:
@@ -342,7 +342,7 @@ The project can be packaged as a regular VS Code extension:
 npm run package
 ```
 
-The generated `server-workspace-*.vsix` file can be installed locally or inside a Remote-SSH window.
+The generated `ssh-server-workspace-*.vsix` file can be installed locally or inside a Remote-SSH window.
 
 For Visual Studio Marketplace publishing, the `publisher` value in `package.json` must match a registered Marketplace publisher.
 
