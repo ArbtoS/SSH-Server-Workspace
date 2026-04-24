@@ -6,8 +6,22 @@ import { notesTemplate, systemStatusTemplate } from "./templates";
 import {
   createDefaultWorkspaceData,
   createEmptySystemInfo,
+  TrackedFile,
   WorkspaceData
 } from "./types";
+
+function normalizeTrackedFile(raw: TrackedFile): TrackedFile {
+  return {
+    ...raw,
+    controlCommands: raw.controlCommands
+      ? {
+          start: raw.controlCommands.start?.trim() || undefined,
+          stop: raw.controlCommands.stop?.trim() || undefined,
+          restart: raw.controlCommands.restart?.trim() || undefined
+        }
+      : undefined
+  };
+}
 
 function normalizeWorkspaceData(raw: Partial<WorkspaceData> | undefined): WorkspaceData {
   const fallback = createDefaultWorkspaceData();
@@ -19,7 +33,7 @@ function normalizeWorkspaceData(raw: Partial<WorkspaceData> | undefined): Worksp
       ...fallback.server,
       ...server
     },
-    trackedFiles: Array.isArray(raw?.trackedFiles) ? raw.trackedFiles : [],
+    trackedFiles: Array.isArray(raw?.trackedFiles) ? raw.trackedFiles.map((file) => normalizeTrackedFile(file as TrackedFile)) : [],
     changeLog: Array.isArray(raw?.changeLog) ? raw.changeLog : []
   };
 }

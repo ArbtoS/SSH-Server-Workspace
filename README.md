@@ -19,6 +19,7 @@ Die Extension läuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt 
 - Initialisierung von `~/.ssh-server-workspace/` auf dem Remote-Host
 - Datei-Tracking für bewusst ausgewählte Serverdateien
 - Klarname und Kommentar pro getrackter Datei
+- Optionale Start/Stop/Restart-Befehle pro getrackter Datei
 - Drag-and-Drop-Sortierung in der Arbeitsliste
 - Rohlog für erkannte Änderungen an getrackten Dateien
 - Systeminfos wie Hostname, OS, Kernel, Architektur und Haupt-IP
@@ -35,8 +36,11 @@ Die Extension läuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt 
 - Keine Webview
 - Kein Cockpit-Ersatz
 - Kein automatisches Tracking beliebiger Terminal-Edits
+- Kein Parsing von `~/.bash_history` als Rohlog-Quelle
 
 Dateien, die mit `nano`, `vim`, `cat > file` oder `sudo` im Terminal bearbeitet werden, werden nicht automatisch entdeckt. Sobald eine Datei einmal getrackt ist, kann `Aktualisieren` ihre Metadaten und Änderungen erfassen.
+
+`~/.bash_history` ist bewusst nicht Teil des Rohlogs. Die Shell-History ist in Linux typischerweise benutzerbezogen statt repo-bezogen, oft zeitversetzt geschrieben und bei `sudo` oder `su` schnell unvollständig.
 
 ### Remote-Dateien
 
@@ -80,6 +84,8 @@ Eine Datei kann auf zwei Wegen aufgenommen werden:
 - `Pfad tracken`: nimmt einen absoluten Remote-Pfad auf, zum Beispiel `/etc/systemd/system/hostapd-healthcheck.timer`
 
 Pro getrackter Datei können Klarname und Kommentar gepflegt werden. Die Arbeitsliste kann per Drag and Drop manuell sortiert werden. Interne Server-Workspace-Dateien wie `NOTIZEN.md`, `SYSTEMSTATUS.md` und `workspace-data.json` werden nicht in der Arbeitsliste angezeigt.
+
+Zusätzlich kann jede getrackte Datei optionale Shell-Befehle für `Starten`, `Stoppen` und `Neustarten` speichern. Diese Befehle lassen sich per Kontextmenü hinterlegen und werden im integrierten Remote-Terminal ausgeführt.
 
 #### System
 
@@ -175,6 +181,7 @@ The extension runs inside an already connected remote workspace. VS Code Remote-
 - Initializes `~/.ssh-server-workspace/` on the remote host
 - File tracking for deliberately selected server files
 - Display name and comment per tracked file
+- Optional start/stop/restart commands per tracked file
 - Drag-and-drop ordering in the work list
 - Raw log for detected changes in tracked files
 - System information such as hostname, OS, kernel, architecture, and main IP
@@ -191,8 +198,11 @@ The extension runs inside an already connected remote workspace. VS Code Remote-
 - No webview
 - No Cockpit replacement
 - No automatic tracking of arbitrary terminal edits
+- No parsing of `~/.bash_history` as a raw-log source
 
 Files edited through `nano`, `vim`, `cat > file`, or `sudo` in a terminal are not discovered automatically. Once a file is tracked, `Refresh` can update its metadata and detect changes.
+
+`~/.bash_history` is intentionally not used for the raw log. On Linux, shell history is usually user-scoped rather than repo-scoped, often written late, and becomes unreliable quickly once `sudo` or `su` gets involved.
 
 ### Remote Files
 
@@ -236,6 +246,8 @@ A file can be added in two ways:
 - `Pfad tracken`: tracks an absolute remote path, for example `/etc/systemd/system/hostapd-healthcheck.timer`
 
 Each tracked file can have a display name and a comment. The work list can be manually sorted with drag and drop. Internal SSH Server Workspace files such as `NOTIZEN.md`, `SYSTEMSTATUS.md`, and `workspace-data.json` are hidden from the work list.
+
+Each tracked file can also store optional shell commands for `Start`, `Stop`, and `Restart`. These commands can be configured from the context menu and are executed in the integrated remote terminal.
 
 #### System
 

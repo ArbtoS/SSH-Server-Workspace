@@ -8,6 +8,12 @@ export interface ServerSystemInfo {
   lastRefreshAt: string;
 }
 
+export interface TrackedFileControlCommands {
+  start?: string;
+  stop?: string;
+  restart?: string;
+}
+
 export interface TrackedFile {
   path: string;
   name: string;
@@ -20,6 +26,7 @@ export interface TrackedFile {
   firstSeenAt: string;
   changeCount: number;
   comment: string;
+  controlCommands?: TrackedFileControlCommands;
   exists: boolean;
 }
 

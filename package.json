@@ -53,6 +53,10 @@
     "onCommand:sshServerWorkspace.clearDisplayName",
     "onCommand:sshServerWorkspace.editComment",
     "onCommand:sshServerWorkspace.deleteComment",
+    "onCommand:sshServerWorkspace.editControlCommands",
+    "onCommand:sshServerWorkspace.startFileAction",
+    "onCommand:sshServerWorkspace.stopFileAction",
+    "onCommand:sshServerWorkspace.restartFileAction",
     "onCommand:sshServerWorkspace.copyPath",
     "onCommand:sshServerWorkspace.updateMetadata"
   ],
@@ -111,6 +115,22 @@
         "title": "SSH Server Workspace: Kommentar loeschen"
       },
       {
+        "command": "sshServerWorkspace.editControlCommands",
+        "title": "SSH Server Workspace: Start/Stop/Restart bearbeiten"
+      },
+      {
+        "command": "sshServerWorkspace.startFileAction",
+        "title": "SSH Server Workspace: Datei starten"
+      },
+      {
+        "command": "sshServerWorkspace.stopFileAction",
+        "title": "SSH Server Workspace: Datei stoppen"
+      },
+      {
+        "command": "sshServerWorkspace.restartFileAction",
+        "title": "SSH Server Workspace: Datei neustarten"
+      },
+      {
         "command": "sshServerWorkspace.copyPath",
         "title": "SSH Server Workspace: Pfad kopieren"
       },
@@ -163,6 +183,22 @@
           "when": "false"
         },
         {
+          "command": "sshServerWorkspace.editControlCommands",
+          "when": "false"
+        },
+        {
+          "command": "sshServerWorkspace.startFileAction",
+          "when": "false"
+        },
+        {
+          "command": "sshServerWorkspace.stopFileAction",
+          "when": "false"
+        },
+        {
+          "command": "sshServerWorkspace.restartFileAction",
+          "when": "false"
+        },
+        {
           "command": "sshServerWorkspace.editDisplayName",
           "when": "false"
         },
@@ -207,9 +243,29 @@
           "group": "3_copy@1"
         },
         {
+          "command": "sshServerWorkspace.editControlCommands",
+          "when": "view == sshServerWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@1"
+        },
+        {
+          "command": "sshServerWorkspace.startFileAction",
+          "when": "view == sshServerWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@2"
+        },
+        {
+          "command": "sshServerWorkspace.stopFileAction",
+          "when": "view == sshServerWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@3"
+        },
+        {
+          "command": "sshServerWorkspace.restartFileAction",
+          "when": "view == sshServerWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@4"
+        },
+        {
           "command": "sshServerWorkspace.updateMetadata",
           "when": "view == sshServerWorkspace.work && viewItem == trackedFile",
-          "group": "4_refresh@1"
+          "group": "5_refresh@1"
         },
         {
           "command": "sshServerWorkspace.openFile",

@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as vscode from "vscode";
 import {
+  setTrackedFileControlCommands,
   updateTrackedFileMetadata,
   refreshTrackedFiles,
   setTrackedFileComment,
@@ -338,4 +339,111 @@ export async function updateMetadata(store: WorkspaceStore, views: RefreshableVi
   await store.save(data);
   views.refreshAll();
   vscode.window.showInformationMessage(t("metadataUpdated"));
+}
+
+async function loadTrackedFileForAction(store: WorkspaceStore, filePath: string) {
+  const data = await loadRequiredData(store);
+  if (!data) {
+    return undefined;
+  }
+
+  const trackedFile = data.trackedFiles.find((file) => path.resolve(file.path) === path.resolve(filePath));
+  if (!trackedFile) {
+    vscode.window.showWarningMessage(t("fileNotTracked"));
+    return undefined;
+  }
+
+  return { data, trackedFile };
+}
+
+async function promptControlCommand(
+  actionLabel: string,
+  currentValue: string | undefined,
+  filePath: string
+): Promise<string | undefined> {
+  return vscode.window.showInputBox({
+    title: t("editControlCommands"),
+    prompt: t("controlCommandPrompt", { action: actionLabel }),
+    value: currentValue || "",
+    placeHolder: t("controlCommandPlaceholder"),
+    ignoreFocusOut: true,
+    valueSelection: [0, currentValue?.length ?? 0]
+  });
+}
+
+export async function editControlCommands(store: WorkspaceStore, views: RefreshableViews, input?: unknown): Promise<void> {
+  const filePath = extractFilePath(input);
+  if (!filePath) {
+    vscode.window.showWarningMessage(t("noFileSelected"));
+    return;
+  }
+
+  const loaded = await loadTrackedFileForAction(store, filePath);
+  if (!loaded) {
+    return;
+  }
+
+  const start = await promptControlCommand(t("actionStart"), loaded.trackedFile.controlCommands?.start, loaded.trackedFile.path);
+  if (start === undefined) {
+    return;
+  }
+
+  const stop = await promptControlCommand(t("actionStop"), loaded.trackedFile.controlCommands?.stop, loaded.trackedFile.path);
+  if (stop === undefined) {
+    return;
+  }
+
+  const restart = await promptControlCommand(
+    t("actionRestart"),
+    loaded.trackedFile.controlCommands?.restart,
+    loaded.trackedFile.path
+  );
+  if (restart === undefined) {
+    return;
+  }
+
+  setTrackedFileControlCommands(loaded.data, loaded.trackedFile.path, { start, stop, restart });
+  await store.save(loaded.data);
+  views.refreshAll();
+  vscode.window.showInformationMessage(t("controlCommandsSaved"));
+}
+
+async function runControlCommand(store: WorkspaceStore, input: unknown, action: "start" | "stop" | "restart"): Promise<void> {
+  const filePath = extractFilePath(input);
+  if (!filePath) {
+    vscode.window.showWarningMessage(t("noFileSelected"));
+    return;
+  }
+
+  const loaded = await loadTrackedFileForAction(store, filePath);
+  if (!loaded) {
+    return;
+  }
+
+  const command = loaded.trackedFile.controlCommands?.[action]?.trim();
+  const actionLabel =
+    action === "start" ? t("actionStart") : action === "stop" ? t("actionStop") : t("actionRestart");
+
+  if (!command) {
+    vscode.window.showWarningMessage(t("controlCommandMissing", { action: actionLabel }));
+    return;
+  }
+
+  const terminalName = "SSH Server Workspace";
+  const terminal = vscode.window.terminals.find((item) => item.name === terminalName) || vscode.window.createTerminal(terminalName);
+  terminal.show();
+  terminal.sendText(command, true);
+  vscode.window.showInformationMessage(t("runningControlCommand", { action: actionLabel }));
+}
+
+export async function runStartCommand(store: WorkspaceStore, input?: unknown): Promise<void> {
+  await runControlCommand(store, input, "start");
+}
+
+export async function runStopCommand(store: WorkspaceStore, input?: unknown): Promise<void> {
+  await runControlCommand(store, input, "stop");
+}
+
+export async function runRestartCommand(store: WorkspaceStore, input?: unknown): Promise<void> {
+  await runControlCommand(store, input, "restart");
 }

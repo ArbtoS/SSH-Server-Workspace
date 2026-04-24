@@ -3,7 +3,7 @@ import * as path from "path";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { sameSecond, toLocalIsoString } from "./dateUtils";
-import { TrackedFile, WorkspaceData } from "./types";
+import { TrackedFile, TrackedFileControlCommands, WorkspaceData } from "./types";
 
 const execFileAsync = promisify(execFile);
 
@@ -119,6 +119,7 @@ export async function updateTrackedFileMetadata(data: WorkspaceData, filePath: s
     firstSeenAt: existing?.firstSeenAt || now,
     changeCount: existing?.changeCount ?? 0,
     comment: existing?.comment ?? "",
+    controlCommands: existing?.controlCommands,
     exists: metadata.exists
   };
 
@@ -168,6 +169,31 @@ export function setTrackedFileDisplayName(data: WorkspaceData, filePath: string,
   data.trackedFiles[index] = {
     ...data.trackedFiles[index],
     displayName: trimmedName || undefined
+  };
+
+  return true;
+}
+
+export function setTrackedFileControlCommands(
+  data: WorkspaceData,
+  filePath: string,
+  controlCommands: TrackedFileControlCommands
+): boolean {
+  const index = findTrackedFileIndex(data, filePath);
+  if (index < 0) {
+    return false;
+  }
+
+  const nextCommands: TrackedFileControlCommands = {
+    start: controlCommands.start?.trim() || undefined,
+    stop: controlCommands.stop?.trim() || undefined,
+    restart: controlCommands.restart?.trim() || undefined
+  };
+
+  data.trackedFiles[index] = {
+    ...data.trackedFiles[index],
+    controlCommands:
+      nextCommands.start || nextCommands.stop || nextCommands.restart ? nextCommands : undefined
   };
 
   return true;

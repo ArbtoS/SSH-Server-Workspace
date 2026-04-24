@@ -53,7 +53,10 @@ export class TrackedFileItem extends vscode.TreeItem {
         `${t("path")}: \`${file.path}\``,
         `${t("lastChanged")}: ${formatDisplayDate(file.lastModifiedAt)}`,
         `${file.owner || "-"}:${file.group || "-"} | ${file.mode || "-"} | ${file.changeCount} ${t("changes")}`,
-        `${t("comment")}: ${file.comment || "-"}`
+        `${t("comment")}: ${file.comment || "-"}`,
+        `${t("controlStart")}: \`${file.controlCommands?.start || "-"}\``,
+        `${t("controlStop")}: \`${file.controlCommands?.stop || "-"}\``,
+        `${t("controlRestart")}: \`${file.controlCommands?.restart || "-"}\``
       ].join("\n")
     );
   }
@@ -128,7 +131,10 @@ export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode>, vsco
           new DetailItem(file.path),
           new DetailItem(`${t("lastChanged")}: ${formatDisplayDate(file.lastModifiedAt)}`),
           new DetailItem(`${file.owner || "-"}:${file.group || "-"} | ${file.mode || "-"} | ${file.changeCount} ${t("changes")}`),
-          new DetailItem(`${t("comment")}: ${file.comment || "-"}`)
+          new DetailItem(`${t("comment")}: ${file.comment || "-"}`),
+          new DetailItem(`${t("controlStart")}: ${file.controlCommands?.start || "-"}`),
+          new DetailItem(`${t("controlStop")}: ${file.controlCommands?.stop || "-"}`),
+          new DetailItem(`${t("controlRestart")}: ${file.controlCommands?.restart || "-"}`)
         ];
 
         if (!file.exists) {

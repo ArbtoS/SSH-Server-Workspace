@@ -11,6 +11,7 @@ import {
   copyPath,
   deleteComment,
   editComment,
+  editControlCommands,
   editDisplayName,
   initializeWorkspace,
   openNotes,
@@ -18,6 +19,9 @@ import {
   openTrackedFile,
   recreateWorkspaceData,
   refreshWorkspace,
+  runRestartCommand,
+  runStartCommand,
+  runStopCommand,
   trackCurrentFile,
   trackPath,
   updateMetadata
@@ -57,6 +61,10 @@ export function registerCommands(
   registerSafeCommand(context, "sshServerWorkspace.clearDisplayName", (input) => clearDisplayName(store, views, input));
   registerSafeCommand(context, "sshServerWorkspace.editComment", (input) => editComment(store, views, input));
   registerSafeCommand(context, "sshServerWorkspace.deleteComment", (input) => deleteComment(store, views, input));
+  registerSafeCommand(context, "sshServerWorkspace.editControlCommands", (input) => editControlCommands(store, views, input));
+  registerSafeCommand(context, "sshServerWorkspace.startFileAction", (input) => runStartCommand(store, input));
+  registerSafeCommand(context, "sshServerWorkspace.stopFileAction", (input) => runStopCommand(store, input));
+  registerSafeCommand(context, "sshServerWorkspace.restartFileAction", (input) => runRestartCommand(store, input));
   registerSafeCommand(context, "sshServerWorkspace.copyPath", (input) => copyPath(input));
   registerSafeCommand(context, "sshServerWorkspace.updateMetadata", (input) => updateMetadata(store, views, input));
 }
