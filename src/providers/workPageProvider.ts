@@ -56,7 +56,8 @@ export class TrackedFileItem extends vscode.TreeItem {
         `${t("comment")}: ${file.comment || "-"}`,
         `${t("controlStart")}: \`${file.controlCommands?.start || "-"}\``,
         `${t("controlStop")}: \`${file.controlCommands?.stop || "-"}\``,
-        `${t("controlRestart")}: \`${file.controlCommands?.restart || "-"}\``
+        `${t("controlRestart")}: \`${file.controlCommands?.restart || "-"}\``,
+        `${t("controlStatus")}: \`${file.controlCommands?.status || "-"}\``
       ].join("\n")
     );
   }
@@ -173,6 +174,13 @@ export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode>, vsco
             file,
             file.controlCommands?.restart,
             "refresh"
+          ),
+          new FileActionItem(
+            t("actionStatus"),
+            "sshServerWorkspace.statusFileAction",
+            file,
+            file.controlCommands?.status,
+            "pulse"
           )
         ];
 

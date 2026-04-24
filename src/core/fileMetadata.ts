@@ -187,13 +187,14 @@ export function setTrackedFileControlCommands(
   const nextCommands: TrackedFileControlCommands = {
     start: controlCommands.start?.trim() || undefined,
     stop: controlCommands.stop?.trim() || undefined,
-    restart: controlCommands.restart?.trim() || undefined
+    restart: controlCommands.restart?.trim() || undefined,
+    status: controlCommands.status?.trim() || undefined
   };
 
   data.trackedFiles[index] = {
     ...data.trackedFiles[index],
     controlCommands:
-      nextCommands.start || nextCommands.stop || nextCommands.restart ? nextCommands : undefined
+      nextCommands.start || nextCommands.stop || nextCommands.restart || nextCommands.status ? nextCommands : undefined
   };
 
   return true;

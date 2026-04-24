@@ -402,13 +402,26 @@ export async function editControlCommands(store: WorkspaceStore, views: Refresha
     return;
   }
 
-  setTrackedFileControlCommands(loaded.data, loaded.trackedFile.path, { start, stop, restart });
+  const status = await promptControlCommand(
+    t("actionStatus"),
+    loaded.trackedFile.controlCommands?.status,
+    loaded.trackedFile.path
+  );
+  if (status === undefined) {
+    return;
+  }
+
+  setTrackedFileControlCommands(loaded.data, loaded.trackedFile.path, { start, stop, restart, status });
   await store.save(loaded.data);
   views.refreshAll();
   vscode.window.showInformationMessage(t("controlCommandsSaved"));
 }
 
-async function runControlCommand(store: WorkspaceStore, input: unknown, action: "start" | "stop" | "restart"): Promise<void> {
+async function runControlCommand(
+  store: WorkspaceStore,
+  input: unknown,
+  action: "start" | "stop" | "restart" | "status"
+): Promise<void> {
   const filePath = extractFilePath(input);
   if (!filePath) {
     vscode.window.showWarningMessage(t("noFileSelected"));
@@ -422,7 +435,13 @@ async function runControlCommand(store: WorkspaceStore, input: unknown, action: 
 
   const command = loaded.trackedFile.controlCommands?.[action]?.trim();
   const actionLabel =
-    action === "start" ? t("actionStart") : action === "stop" ? t("actionStop") : t("actionRestart");
+    action === "start"
+      ? t("actionStart")
+      : action === "stop"
+        ? t("actionStop")
+        : action === "restart"
+          ? t("actionRestart")
+          : t("actionStatus");
 
   if (!command) {
     vscode.window.showWarningMessage(t("controlCommandMissing", { action: actionLabel }));
@@ -446,4 +465,8 @@ export async function runStopCommand(store: WorkspaceStore, input?: unknown): Pr
 
 export async function runRestartCommand(store: WorkspaceStore, input?: unknown): Promise<void> {
   await runControlCommand(store, input, "restart");
+}
+
+export async function runStatusCommand(store: WorkspaceStore, input?: unknown): Promise<void> {
+  await runControlCommand(store, input, "status");
 }

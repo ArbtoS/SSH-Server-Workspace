@@ -13,13 +13,14 @@ import {
 function normalizeTrackedFile(raw: TrackedFile): TrackedFile {
   return {
     ...raw,
-    controlCommands: raw.controlCommands
-      ? {
-          start: raw.controlCommands.start?.trim() || undefined,
-          stop: raw.controlCommands.stop?.trim() || undefined,
-          restart: raw.controlCommands.restart?.trim() || undefined
-        }
-      : undefined
+        controlCommands: raw.controlCommands
+          ? {
+              start: raw.controlCommands.start?.trim() || undefined,
+              stop: raw.controlCommands.stop?.trim() || undefined,
+              restart: raw.controlCommands.restart?.trim() || undefined,
+              status: raw.controlCommands.status?.trim() || undefined
+            }
+          : undefined
   };
 }
 

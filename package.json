@@ -2,7 +2,7 @@
   "name": "ssh-server-workspace",
   "displayName": "SSH Server Workspace",
   "description": "A small Remote-SSH workspace helper for system notes, server file tracking, and basic system information.",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publisher": "ArbtoS",
   "license": "MIT",
   "icon": "resources/ssh-server-workspace.png",
@@ -57,6 +57,7 @@
     "onCommand:sshServerWorkspace.startFileAction",
     "onCommand:sshServerWorkspace.stopFileAction",
     "onCommand:sshServerWorkspace.restartFileAction",
+    "onCommand:sshServerWorkspace.statusFileAction",
     "onCommand:sshServerWorkspace.copyPath",
     "onCommand:sshServerWorkspace.updateMetadata"
   ],
@@ -131,6 +132,10 @@
         "title": "SSH Server Workspace: Datei neustarten"
       },
       {
+        "command": "sshServerWorkspace.statusFileAction",
+        "title": "SSH Server Workspace: Datei-Status abrufen"
+      },
+      {
         "command": "sshServerWorkspace.copyPath",
         "title": "SSH Server Workspace: Pfad kopieren"
       },
@@ -199,6 +204,10 @@
           "when": "false"
         },
         {
+          "command": "sshServerWorkspace.statusFileAction",
+          "when": "false"
+        },
+        {
           "command": "sshServerWorkspace.editDisplayName",
           "when": "false"
         },
@@ -263,6 +272,11 @@
           "group": "4_actions@4"
         },
         {
+          "command": "sshServerWorkspace.statusFileAction",
+          "when": "view == sshServerWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@5"
+        },
+        {
           "command": "sshServerWorkspace.updateMetadata",
           "when": "view == sshServerWorkspace.work && viewItem == trackedFile",
           "group": "5_refresh@1"
@@ -295,7 +309,7 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
-    "package": "vsce package --out ssh-server-workspace-0.2.2.vsix",
+    "package": "vsce package --out ssh-server-workspace-0.2.3.vsix",
     "publish:marketplace": "vsce publish",
     "watch": "tsc -watch -p ./",
     "vscode:prepublish": "npm run compile"

@@ -20,6 +20,7 @@ import {
   recreateWorkspaceData,
   refreshWorkspace,
   runRestartCommand,
+  runStatusCommand,
   runStartCommand,
   runStopCommand,
   trackCurrentFile,
@@ -65,6 +66,7 @@ export function registerCommands(
   registerSafeCommand(context, "sshServerWorkspace.startFileAction", (input) => runStartCommand(store, input));
   registerSafeCommand(context, "sshServerWorkspace.stopFileAction", (input) => runStopCommand(store, input));
   registerSafeCommand(context, "sshServerWorkspace.restartFileAction", (input) => runRestartCommand(store, input));
+  registerSafeCommand(context, "sshServerWorkspace.statusFileAction", (input) => runStatusCommand(store, input));
   registerSafeCommand(context, "sshServerWorkspace.copyPath", (input) => copyPath(input));
   registerSafeCommand(context, "sshServerWorkspace.updateMetadata", (input) => updateMetadata(store, views, input));
 }

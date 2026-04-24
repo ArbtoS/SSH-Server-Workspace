@@ -12,6 +12,7 @@ export interface TrackedFileControlCommands {
   start?: string;
   stop?: string;
   restart?: string;
+  status?: string;
 }
 
 export interface TrackedFile {
