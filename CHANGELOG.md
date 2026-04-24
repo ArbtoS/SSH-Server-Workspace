@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.3
+## 0.3.0
 
 - Added a per-file `Status` command alongside start/stop/restart actions.
 - Changed file actions in the work list from plain details to directly clickable entries.
