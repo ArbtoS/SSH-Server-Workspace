@@ -5,7 +5,7 @@ import { ChangeLogEntry, TrackedFile } from "../core/types";
 import { WorkspaceStore } from "../core/workspaceStore";
 import { CommandItem, MessageItem } from "./commonItems";
 
-type WorkNode = WorkSectionItem | TrackedFileItem | DetailItem | LogEntryItem | MessageItem | CommandItem;
+type WorkNode = WorkSectionItem | TrackedFileItem | DetailItem | FileActionItem | LogEntryItem | MessageItem | CommandItem;
 const trackedFileMime = "application/vnd.ssh-server-workspace.tracked-file";
 
 function sortTrackedFiles(files: TrackedFile[]): TrackedFile[] {
@@ -67,6 +67,27 @@ class DetailItem extends vscode.TreeItem {
     super(label, vscode.TreeItemCollapsibleState.None);
     this.contextValue = "fileDetail";
     this.iconPath = new vscode.ThemeIcon("blank");
+  }
+}
+
+class FileActionItem extends vscode.TreeItem {
+  public constructor(
+    label: string,
+    commandId: string,
+    file: TrackedFile,
+    configuredCommand: string | undefined,
+    iconName: string
+  ) {
+    super(label, vscode.TreeItemCollapsibleState.None);
+    this.contextValue = "fileAction";
+    this.description = configuredCommand || "-";
+    this.iconPath = new vscode.ThemeIcon(iconName);
+    this.command = {
+      command: commandId,
+      title: label,
+      arguments: [file.path]
+    };
+    this.tooltip = configuredCommand || label;
   }
 }
 
@@ -132,9 +153,27 @@ export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode>, vsco
           new DetailItem(`${t("lastChanged")}: ${formatDisplayDate(file.lastModifiedAt)}`),
           new DetailItem(`${file.owner || "-"}:${file.group || "-"} | ${file.mode || "-"} | ${file.changeCount} ${t("changes")}`),
           new DetailItem(`${t("comment")}: ${file.comment || "-"}`),
-          new DetailItem(`${t("controlStart")}: ${file.controlCommands?.start || "-"}`),
-          new DetailItem(`${t("controlStop")}: ${file.controlCommands?.stop || "-"}`),
-          new DetailItem(`${t("controlRestart")}: ${file.controlCommands?.restart || "-"}`)
+          new FileActionItem(
+            t("actionStart"),
+            "sshServerWorkspace.startFileAction",
+            file,
+            file.controlCommands?.start,
+            "play"
+          ),
+          new FileActionItem(
+            t("actionStop"),
+            "sshServerWorkspace.stopFileAction",
+            file,
+            file.controlCommands?.stop,
+            "primitive-square"
+          ),
+          new FileActionItem(
+            t("actionRestart"),
+            "sshServerWorkspace.restartFileAction",
+            file,
+            file.controlCommands?.restart,
+            "refresh"
+          )
         ];
 
         if (!file.exists) {
