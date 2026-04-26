@@ -1,4 +1,5 @@
-import * as vscode from "vscode";
+﻿import * as vscode from "vscode";
+import { SavedCommandItem } from "../providers/actionsProvider";
 import { LogEntryItem, TrackedFileItem } from "../providers/workPageProvider";
 
 export function messageFromError(error: unknown): string {
@@ -60,6 +61,24 @@ export function extractExtraCommandId(input: unknown): string | undefined {
   if (typeof input === "object" && input && "extraCommand" in input) {
     const extraCommand = input.extraCommand as { id?: unknown };
     return typeof extraCommand.id === "string" ? extraCommand.id : undefined;
+  }
+
+  return undefined;
+}
+
+export function extractSavedCommandId(input: unknown): string | undefined {
+  if (input instanceof SavedCommandItem) {
+    return input.savedCommand.id;
+  }
+
+  if (typeof input === "object" && input && "savedCommandId" in input) {
+    const savedCommandId = input.savedCommandId as unknown;
+    return typeof savedCommandId === "string" ? savedCommandId : undefined;
+  }
+
+  if (typeof input === "object" && input && "savedCommand" in input) {
+    const savedCommand = input.savedCommand as { id?: unknown };
+    return typeof savedCommand.id === "string" ? savedCommand.id : undefined;
   }
 
   return undefined;

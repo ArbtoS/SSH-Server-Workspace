@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.5
+
+- Added a global saved-command list in the Aktionen view with drag-and-drop ordering.
+- Saved commands can now be added, run, edited, duplicated, and deleted.
+- Each saved command stores a display name, shell command, and optional note.
+
 ## 0.3.4
 
 - Reworked the notes view to show note files instead of note lines from NOTIZEN.md.

@@ -1,4 +1,4 @@
-import { Uri } from "vscode";
+﻿import { Uri } from "vscode";
 import * as path from "path";
 import {
   deleteFile,
@@ -16,6 +16,7 @@ import {
   createEmptySystemInfo,
   TrackedFileExtraCommand,
   TrackedFile,
+  WorkspaceCommand,
   WorkspaceData,
   WorkspaceNote
 } from "./types";
@@ -68,6 +69,22 @@ function compareNotePath(left: WorkspaceNote, right: WorkspaceNote): number {
   }
 
   return left.title.localeCompare(right.title, undefined, { sensitivity: "base" });
+}
+
+function compareSavedCommand(left: WorkspaceCommand, right: WorkspaceCommand): number {
+  if (typeof left.sortOrder === "number" && typeof right.sortOrder === "number") {
+    return left.sortOrder - right.sortOrder;
+  }
+
+  if (typeof left.sortOrder === "number") {
+    return -1;
+  }
+
+  if (typeof right.sortOrder === "number") {
+    return 1;
+  }
+
+  return left.name.localeCompare(right.name, undefined, { sensitivity: "base" });
 }
 
 function slugifyNoteTitle(value: string): string {
@@ -128,6 +145,40 @@ export class WorkspaceStore {
       }));
   }
 
+  private normalizeSavedCommands(rawCommands: unknown): WorkspaceCommand[] {
+    const commands: WorkspaceCommand[] = [];
+
+    if (Array.isArray(rawCommands)) {
+      for (const raw of rawCommands) {
+        if (!raw || typeof raw !== "object") {
+          continue;
+        }
+
+        const candidate = raw as Partial<WorkspaceCommand>;
+        const name = candidate.name?.trim();
+        const command = candidate.command?.trim();
+        if (!name || !command) {
+          continue;
+        }
+
+        commands.push({
+          id: candidate.id?.trim() || `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          name,
+          command,
+          note: candidate.note?.trim() || "",
+          sortOrder: typeof candidate.sortOrder === "number" ? candidate.sortOrder : undefined
+        });
+      }
+    }
+
+    return commands
+      .sort(compareSavedCommand)
+      .map((entry, index) => ({
+        ...entry,
+        sortOrder: index
+      }));
+  }
+
   private normalizeWorkspaceData(raw: Partial<WorkspaceData> | undefined): WorkspaceData {
     const fallback = createDefaultWorkspaceData();
     const server = raw?.server ?? createEmptySystemInfo();
@@ -142,7 +193,8 @@ export class WorkspaceStore {
         ? raw.trackedFiles.map((file) => normalizeTrackedFile(file as TrackedFile))
         : [],
       changeLog: Array.isArray(raw?.changeLog) ? raw.changeLog : [],
-      notes: this.normalizeNotes(raw?.notes)
+      notes: this.normalizeNotes(raw?.notes),
+      savedCommands: this.normalizeSavedCommands(raw?.savedCommands)
     };
   }
 
@@ -254,6 +306,98 @@ export class WorkspaceStore {
       ...remaining.slice(insertIndex)
     ].map((note, index) => ({
       ...note,
+      sortOrder: index
+    }));
+  }
+
+  public listSavedCommands(data: WorkspaceData): WorkspaceCommand[] {
+    return this.normalizeSavedCommands(data.savedCommands);
+  }
+
+  public addSavedCommand(
+    data: WorkspaceData,
+    input: { name: string; command: string; note?: string }
+  ): WorkspaceCommand {
+    const commands = this.listSavedCommands(data);
+    const savedCommand: WorkspaceCommand = {
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      name: input.name.trim(),
+      command: input.command.trim(),
+      note: input.note?.trim() || "",
+      sortOrder: commands.length
+    };
+
+    data.savedCommands = this.normalizeSavedCommands([...commands, savedCommand]);
+    return savedCommand;
+  }
+
+  public updateSavedCommand(
+    data: WorkspaceData,
+    commandId: string,
+    input: { name: string; command: string; note?: string }
+  ): WorkspaceCommand | undefined {
+    const commands = this.listSavedCommands(data);
+    const index = commands.findIndex((entry) => entry.id === commandId);
+    if (index < 0) {
+      return undefined;
+    }
+
+    const next: WorkspaceCommand = {
+      ...commands[index],
+      name: input.name.trim(),
+      command: input.command.trim(),
+      note: input.note?.trim() || ""
+    };
+
+    commands[index] = next;
+    data.savedCommands = this.normalizeSavedCommands(commands);
+    return next;
+  }
+
+  public duplicateSavedCommand(data: WorkspaceData, commandId: string): WorkspaceCommand | undefined {
+    const commands = this.listSavedCommands(data);
+    const original = commands.find((entry) => entry.id === commandId);
+    if (!original) {
+      return undefined;
+    }
+
+    const duplicate: WorkspaceCommand = {
+      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      name: `${original.name} Kopie`,
+      command: original.command,
+      note: original.note,
+      sortOrder: commands.length
+    };
+
+    data.savedCommands = this.normalizeSavedCommands([...commands, duplicate]);
+    return duplicate;
+  }
+
+  public removeSavedCommand(data: WorkspaceData, commandId: string): boolean {
+    const commands = this.listSavedCommands(data);
+    const next = commands.filter((entry) => entry.id !== commandId);
+    if (next.length === commands.length) {
+      return false;
+    }
+
+    data.savedCommands = this.normalizeSavedCommands(next);
+    return true;
+  }
+
+  public reorderSavedCommands(data: WorkspaceData, draggedIds: string[], targetId?: string): void {
+    const draggedSet = new Set(draggedIds);
+    const current = this.listSavedCommands(data);
+    const moving = current.filter((entry) => draggedSet.has(entry.id));
+    const remaining = current.filter((entry) => !draggedSet.has(entry.id));
+    const targetIndex = targetId ? remaining.findIndex((entry) => entry.id === targetId) : remaining.length;
+    const insertIndex = targetIndex >= 0 ? targetIndex : remaining.length;
+
+    data.savedCommands = [
+      ...remaining.slice(0, insertIndex),
+      ...moving,
+      ...remaining.slice(insertIndex)
+    ].map((entry, index) => ({
+      ...entry,
       sortOrder: index
     }));
   }

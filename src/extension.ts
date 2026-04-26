@@ -9,7 +9,7 @@ import { WorkPageProvider } from "./providers/workPageProvider";
 export function activate(context: vscode.ExtensionContext): void {
   const store = new WorkspaceStore();
 
-  const actionsProvider = new ActionsProvider();
+  const actionsProvider = new ActionsProvider(store);
   const workProvider = new WorkPageProvider(store);
   const systemProvider = new SystemProvider(store);
   const notesProvider = new NotesProvider(store);
@@ -23,7 +23,9 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     vscode.window.createTreeView("sshWorkspace.actions", {
-      treeDataProvider: actionsProvider
+      treeDataProvider: actionsProvider,
+      dragAndDropController: actionsProvider,
+      showCollapseAll: true
     }),
     vscode.window.createTreeView("sshWorkspace.work", {
       treeDataProvider: workProvider,

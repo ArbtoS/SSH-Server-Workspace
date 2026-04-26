@@ -28,6 +28,14 @@ export interface WorkspaceNote {
   sortOrder?: number;
 }
 
+export interface WorkspaceCommand {
+  id: string;
+  name: string;
+  command: string;
+  note: string;
+  sortOrder?: number;
+}
+
 export interface TrackedFile {
   path: string;
   name: string;
@@ -56,6 +64,7 @@ export interface WorkspaceData {
   trackedFiles: TrackedFile[];
   changeLog: ChangeLogEntry[];
   notes: WorkspaceNote[];
+  savedCommands: WorkspaceCommand[];
 }
 
 export function createEmptySystemInfo(): ServerSystemInfo {
@@ -76,6 +85,7 @@ export function createDefaultWorkspaceData(): WorkspaceData {
     server: createEmptySystemInfo(),
     trackedFiles: [],
     changeLog: [],
-    notes: []
+    notes: [],
+    savedCommands: []
   };
 }

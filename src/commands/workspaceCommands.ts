@@ -12,9 +12,9 @@ import {
 } from "../core/fileMetadata";
 import { t } from "../core/localization";
 import { readSystemInfo } from "../core/systemInfo";
-import { createDefaultWorkspaceData } from "../core/types";
+import { createDefaultWorkspaceData, WorkspaceCommand } from "../core/types";
 import { WorkspaceStore } from "../core/workspaceStore";
-import { extractExtraCommandId, extractFilePath } from "./commandUtils";
+import { extractExtraCommandId, extractFilePath, extractSavedCommandId } from "./commandUtils";
 
 export interface RefreshableViews {
   refreshAll(): void;
@@ -576,4 +576,192 @@ export async function runExtraCommand(store: WorkspaceStore, input?: unknown): P
   terminal.show();
   terminal.sendText(extraCommand.command, true);
   vscode.window.showInformationMessage(t("runningControlCommand", { action: extraCommand.label }));
+}
+
+function getWorkspaceTerminal(): vscode.Terminal {
+  const terminalName = "SSH Workspace";
+  return vscode.window.terminals.find((item) => item.name === terminalName) || vscode.window.createTerminal(terminalName);
+}
+
+function runCommandInWorkspaceTerminal(label: string, command: string): void {
+  const terminal = getWorkspaceTerminal();
+  terminal.show();
+  terminal.sendText(command, true);
+  vscode.window.showInformationMessage(t("runningControlCommand", { action: label }));
+}
+
+async function promptSavedCommandValues(
+  title: string,
+  current?: { name?: string; command?: string; note?: string }
+): Promise<{ name: string; command: string; note: string } | undefined> {
+  const name = await vscode.window.showInputBox({
+    title,
+    prompt: t("savedCommandNamePrompt"),
+    value: current?.name || "",
+    ignoreFocusOut: true,
+    validateInput: (value) => (value.trim() ? undefined : t("savedCommandNameRequired"))
+  });
+  if (name === undefined) {
+    return undefined;
+  }
+
+  const command = await vscode.window.showInputBox({
+    title,
+    prompt: t("savedCommandCommandPrompt"),
+    value: current?.command || "",
+    ignoreFocusOut: true,
+    validateInput: (value) => (value.trim() ? undefined : t("savedCommandCommandRequired"))
+  });
+  if (command === undefined) {
+    return undefined;
+  }
+
+  const note = await vscode.window.showInputBox({
+    title,
+    prompt: t("savedCommandNotePrompt"),
+    value: current?.note || "",
+    ignoreFocusOut: true
+  });
+  if (note === undefined) {
+    return undefined;
+  }
+
+  return {
+    name: name.trim(),
+    command: command.trim(),
+    note: note.trim()
+  };
+}
+
+async function loadSavedCommandForAction(store: WorkspaceStore, commandId: string) {
+  const data = await loadRequiredData(store);
+  if (!data) {
+    return undefined;
+  }
+
+  const savedCommand = store.listSavedCommands(data).find((entry) => entry.id === commandId);
+  if (!savedCommand) {
+    vscode.window.showWarningMessage(t("savedCommandNotFound"));
+    return undefined;
+  }
+
+  return { data, savedCommand };
+}
+
+export async function addSavedCommand(store: WorkspaceStore, views: RefreshableViews): Promise<void> {
+  const data = await loadRequiredData(store);
+  if (!data) {
+    return;
+  }
+
+  const values = await promptSavedCommandValues(t("actionAddSavedCommand"));
+  if (!values) {
+    return;
+  }
+
+  store.addSavedCommand(data, values);
+  await store.save(data);
+  views.refreshAll();
+  vscode.window.showInformationMessage(t("savedCommandAdded"));
+}
+
+export async function editSavedCommand(store: WorkspaceStore, views: RefreshableViews, input?: unknown): Promise<void> {
+  const savedCommandId = extractSavedCommandId(input);
+  if (!savedCommandId) {
+    vscode.window.showWarningMessage(t("savedCommandNotFound"));
+    return;
+  }
+
+  const loaded = await loadSavedCommandForAction(store, savedCommandId);
+  if (!loaded) {
+    return;
+  }
+
+  const values = await promptSavedCommandValues(t("editSavedCommand"), loaded.savedCommand);
+  if (!values) {
+    return;
+  }
+
+  store.updateSavedCommand(loaded.data, savedCommandId, values);
+  await store.save(loaded.data);
+  views.refreshAll();
+  vscode.window.showInformationMessage(t("savedCommandUpdated"));
+}
+
+export async function duplicateSavedCommand(store: WorkspaceStore, views: RefreshableViews, input?: unknown): Promise<void> {
+  const savedCommandId = extractSavedCommandId(input);
+  if (!savedCommandId) {
+    vscode.window.showWarningMessage(t("savedCommandNotFound"));
+    return;
+  }
+
+  const loaded = await loadSavedCommandForAction(store, savedCommandId);
+  if (!loaded) {
+    return;
+  }
+
+  const duplicated = store.duplicateSavedCommand(loaded.data, savedCommandId);
+  if (!duplicated) {
+    vscode.window.showWarningMessage(t("savedCommandNotFound"));
+    return;
+  }
+
+  const values = await promptSavedCommandValues(t("duplicateSavedCommand"), duplicated);
+  if (!values) {
+    loaded.data.savedCommands = loaded.data.savedCommands.filter((entry) => entry.id !== duplicated.id);
+    await store.save(loaded.data);
+    views.refreshAll();
+    return;
+  }
+
+  store.updateSavedCommand(loaded.data, duplicated.id, values);
+  await store.save(loaded.data);
+  views.refreshAll();
+  vscode.window.showInformationMessage(t("savedCommandDuplicated"));
+}
+
+export async function deleteSavedCommand(store: WorkspaceStore, views: RefreshableViews, input?: unknown): Promise<void> {
+  const savedCommandId = extractSavedCommandId(input);
+  if (!savedCommandId) {
+    vscode.window.showWarningMessage(t("savedCommandNotFound"));
+    return;
+  }
+
+  const loaded = await loadSavedCommandForAction(store, savedCommandId);
+  if (!loaded) {
+    return;
+  }
+
+  const confirmation = await vscode.window.showWarningMessage(
+    t("deleteSavedCommandQuestion", { name: loaded.savedCommand.name }),
+    { modal: true },
+    t("deleteSavedCommandConfirm")
+  );
+  if (confirmation !== t("deleteSavedCommandConfirm")) {
+    return;
+  }
+
+  if (!store.removeSavedCommand(loaded.data, savedCommandId)) {
+    vscode.window.showWarningMessage(t("savedCommandNotFound"));
+    return;
+  }
+
+  await store.save(loaded.data);
+  views.refreshAll();
+  vscode.window.showInformationMessage(t("savedCommandDeleted", { name: loaded.savedCommand.name }));
+}
+
+export async function runSavedCommand(store: WorkspaceStore, input?: unknown): Promise<void> {
+  const savedCommandId = extractSavedCommandId(input);
+  if (!savedCommandId) {
+    vscode.window.showWarningMessage(t("savedCommandNotFound"));
+    return;
+  }
+
+  const loaded = await loadSavedCommandForAction(store, savedCommandId);
+  if (!loaded) {
+    return;
+  }
+
+  runCommandInWorkspaceTerminal(loaded.savedCommand.name, loaded.savedCommand.command);
 }
