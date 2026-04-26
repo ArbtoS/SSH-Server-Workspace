@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+﻿import * as vscode from "vscode";
 import { WorkspaceStore } from "./core/workspaceStore";
 import { registerCommands } from "./commands/registerCommands";
 import { ActionsProvider } from "./providers/actionsProvider";
@@ -34,7 +34,8 @@ export function activate(context: vscode.ExtensionContext): void {
       treeDataProvider: systemProvider
     }),
     vscode.window.createTreeView("sshWorkspace.notes", {
-      treeDataProvider: notesProvider
+      treeDataProvider: notesProvider,
+      dragAndDropController: notesProvider
     }),
     vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration("sshWorkspace.language")) {

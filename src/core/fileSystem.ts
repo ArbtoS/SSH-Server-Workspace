@@ -1,4 +1,4 @@
-import * as fs from "fs/promises";
+﻿import * as fs from "fs/promises";
 import * as path from "path";
 
 export async function exists(filePath: string): Promise<boolean> {
@@ -30,6 +30,15 @@ export async function readJsonFile<T>(filePath: string): Promise<T> {
 
 export async function readTextFile(filePath: string): Promise<string> {
   return fs.readFile(filePath, "utf8");
+}
+
+export async function writeTextFile(filePath: string, content: string): Promise<void> {
+  await ensureDirectory(path.dirname(filePath));
+  await fs.writeFile(filePath, content, "utf8");
+}
+
+export async function deleteFile(filePath: string): Promise<void> {
+  await fs.unlink(filePath);
 }
 
 export async function appendTextFile(filePath: string, content: string): Promise<void> {

@@ -72,13 +72,14 @@ export async function recreateWorkspaceData(store: WorkspaceStore, views: Refres
   vscode.window.showInformationMessage(t("recreated"));
 }
 
-export async function openNotes(store: WorkspaceStore): Promise<void> {
+export async function openNotes(store: WorkspaceStore, input?: unknown): Promise<void> {
   if (!(await store.isInitialized())) {
     vscode.window.showWarningMessage(t("warningInitializeFirst"));
     return;
   }
 
-  await vscode.window.showTextDocument(store.notesUri(), { preview: false });
+  const filePath = extractFilePath(input);
+  await vscode.window.showTextDocument(store.notesUri(filePath), { preview: false });
 }
 
 export async function addNote(store: WorkspaceStore, views: RefreshableViews): Promise<void> {
@@ -87,20 +88,67 @@ export async function addNote(store: WorkspaceStore, views: RefreshableViews): P
     return;
   }
 
-  const note = await vscode.window.showInputBox({
+  const title = await vscode.window.showInputBox({
     title: t("actionAddNote"),
     prompt: t("addNotePrompt"),
+    placeHolder: t("addNotePlaceholder"),
     ignoreFocusOut: true,
     validateInput: (value) => (value.trim() ? undefined : t("emptyNote"))
   });
 
-  if (note === undefined) {
+  if (title === undefined) {
     return;
   }
 
-  await store.addNote(note.trim());
+  const data = await loadRequiredData(store);
+  if (!data) {
+    return;
+  }
+
+  const note = await store.createNote(data, title.trim());
+  await store.save(data);
   views.refreshAll();
-  vscode.window.showInformationMessage(t("noteAdded"));
+  await vscode.window.showTextDocument(store.notesUri(note.path), { preview: false });
+  vscode.window.showInformationMessage(t("noteAdded", { title: note.title }));
+}
+
+export async function deleteNote(store: WorkspaceStore, views: RefreshableViews, input?: unknown): Promise<void> {
+  const notePath = extractFilePath(input);
+  if (!notePath) {
+    vscode.window.showWarningMessage(t("noNoteSelected"));
+    return;
+  }
+
+  const data = await loadRequiredData(store);
+  if (!data) {
+    return;
+  }
+
+  const note = store.listNotes(data).find((entry) => path.resolve(entry.path) === path.resolve(notePath));
+  if (!note) {
+    vscode.window.showWarningMessage(t("noNoteSelected"));
+    return;
+  }
+
+  if (path.resolve(note.path) === path.resolve(store.paths.notes)) {
+    vscode.window.showWarningMessage(t("deleteGeneralNoteBlocked"));
+    return;
+  }
+
+  const confirmation = await vscode.window.showWarningMessage(
+    t("deleteNoteQuestion", { title: note.title }),
+    { modal: true },
+    t("deleteNoteConfirm")
+  );
+
+  if (confirmation !== t("deleteNoteConfirm")) {
+    return;
+  }
+
+  await store.deleteNote(data, note.path);
+  await store.save(data);
+  views.refreshAll();
+  vscode.window.showInformationMessage(t("noteDeleted", { title: note.title }));
 }
 
 export async function openSystemStatus(store: WorkspaceStore): Promise<void> {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.4
+
+- Reworked the notes view to show note files instead of note lines from NOTIZEN.md.
+- New notes now create separate Markdown files under the workspace instead of appending to NOTIZEN.md.
+- Added drag-and-drop ordering and deletion for individual note files in the notes view.
+
 ## 0.3.3
 
 - Simplified service configuration so tracked files only ask for a serviceName.

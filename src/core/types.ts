@@ -1,4 +1,4 @@
-export interface ServerSystemInfo {
+﻿export interface ServerSystemInfo {
   hostname: string;
   osName: string;
   osVersion: string;
@@ -20,6 +20,12 @@ export interface TrackedFileExtraCommand {
   id: string;
   label: string;
   command: string;
+}
+
+export interface WorkspaceNote {
+  path: string;
+  title: string;
+  sortOrder?: number;
 }
 
 export interface TrackedFile {
@@ -49,6 +55,7 @@ export interface WorkspaceData {
   server: ServerSystemInfo;
   trackedFiles: TrackedFile[];
   changeLog: ChangeLogEntry[];
+  notes: WorkspaceNote[];
 }
 
 export function createEmptySystemInfo(): ServerSystemInfo {
@@ -68,6 +75,7 @@ export function createDefaultWorkspaceData(): WorkspaceData {
     version: "0.1",
     server: createEmptySystemInfo(),
     trackedFiles: [],
-    changeLog: []
+    changeLog: [],
+    notes: []
   };
 }

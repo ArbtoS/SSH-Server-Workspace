@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+﻿import * as vscode from "vscode";
 import { WorkspaceStore } from "../core/workspaceStore";
 import { ActionsProvider } from "../providers/actionsProvider";
 import { NotesProvider } from "../providers/notesProvider";
@@ -11,6 +11,7 @@ import {
   clearDisplayName,
   copyPath,
   deleteComment,
+  deleteNote,
   editComment,
   editControlCommands,
   editDisplayName,
@@ -55,8 +56,9 @@ export function registerCommands(
   registerSafeCommand(context, "sshWorkspace.initialize", () => initializeWorkspace(store, views));
   registerSafeCommand(context, "sshWorkspace.refresh", () => refreshWorkspace(store, views));
   registerSafeCommand(context, "sshWorkspace.recreateData", () => recreateWorkspaceData(store, views));
-  registerSafeCommand(context, "sshWorkspace.openNotes", () => openNotes(store));
+  registerSafeCommand(context, "sshWorkspace.openNotes", (input) => openNotes(store, input));
   registerSafeCommand(context, "sshWorkspace.addNote", () => addNote(store, views));
+  registerSafeCommand(context, "sshWorkspace.deleteNote", (input) => deleteNote(store, views, input));
   registerSafeCommand(context, "sshWorkspace.openSystemStatus", () => openSystemStatus(store));
   registerSafeCommand(context, "sshWorkspace.openFile", (input) => openTrackedFile(store, views, input));
   registerSafeCommand(context, "sshWorkspace.trackCurrentFile", () => trackCurrentFile(store, views));
