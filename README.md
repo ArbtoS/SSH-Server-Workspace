@@ -192,7 +192,7 @@ The extension runs inside an already connected remote workspace. VS Code Remote-
 - System information such as hostname, OS, kernel, architecture, and main IP
 - General notes in `NOTIZEN.md`
 - Additional standalone note files under `~/.ssh-workspace/notes/`
-- Global saved commands with name, command, note, and the last 10 runs including output
+- Global saved commands with name, command, note, and the last 10 runs with a limited output preview
 - German/English language switch through `sshWorkspace.language`
 
 ### Not Included
@@ -275,6 +275,8 @@ The notes view offers:
 - `Neue Notiz`: creates a separate Markdown note file
 - `NOTIZEN.md`: general long-lived notes file
 - additional note files that can be reordered with drag and drop and deleted
+- `Recent Output`: limited preview of the last 10 command runs, with a manual clear action
+- `sudo` commands from the global command list can fall back to the integrated terminal so a password prompt is possible
 
 ### Test Installation
 
