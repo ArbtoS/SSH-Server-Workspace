@@ -1,419 +1,419 @@
 {
-    "name":  "ssh-workspace",
-    "displayName":  "SSH Workspace",
-    "description":  "A small Remote-SSH workspace helper for system notes, server file tracking, and basic system information.",
-    "version":  "0.3.6",
-    "publisher":  "ArbtoS",
-    "license":  "MIT",
-    "icon":  "resources/ssh-workspace.png",
-    "repository":  {
-                       "type":  "git",
-                       "url":  "https://github.com/ArbtoS/SSH-Workspace.git"
-                   },
-    "bugs":  {
-                 "url":  "https://github.com/ArbtoS/SSH-Workspace/issues"
-             },
-    "homepage":  "https://github.com/ArbtoS/SSH-Workspace#readme",
-    "keywords":  [
-                     "remote-ssh",
-                     "server",
-                     "workspace",
-                     "notes",
-                     "linux"
-                 ],
-    "engines":  {
-                    "vscode":  "^1.92.0"
-                },
-    "categories":  [
-                       "Other"
-                   ],
-    "galleryBanner":  {
-                          "color":  "#101820",
-                          "theme":  "dark"
-                      },
-    "main":  "./out/extension.js",
-    "extensionKind":  [
-                          "workspace"
-                      ],
-    "contributes":  {
-                        "commands":  [
-                                         {
-                                             "command":  "sshWorkspace.initialize",
-                                             "title":  "SSH Workspace: Initialisieren"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.refresh",
-                                             "title":  "SSH Workspace: Aktualisieren"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.recreateData",
-                                             "title":  "SSH Workspace: Daten neu erstellen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.openNotes",
-                                             "title":  "SSH Workspace: Notizen oeffnen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.addNote",
-                                             "title":  "SSH Workspace: Neue Notiz"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.deleteNote",
-                                             "title":  "SSH Workspace: Notiz loeschen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.openSystemStatus",
-                                             "title":  "SSH Workspace: Systemstatus oeffnen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.openFile",
-                                             "title":  "SSH Workspace: Datei oeffnen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.trackCurrentFile",
-                                             "title":  "SSH Workspace: Aktuelle Datei tracken"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.trackPath",
-                                             "title":  "SSH Workspace: Pfad tracken"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.editDisplayName",
-                                             "title":  "SSH Workspace: Klarname bearbeiten"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.clearDisplayName",
-                                             "title":  "SSH Workspace: Klarname loeschen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.editComment",
-                                             "title":  "SSH Workspace: Kommentar bearbeiten"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.deleteComment",
-                                             "title":  "SSH Workspace: Kommentar loeschen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.editControlCommands",
-                                             "title":  "SSH Workspace: Service bearbeiten"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.addExtraCommand",
-                                             "title":  "SSH Workspace: Zusatzbefehl hinzufuegen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.removeExtraCommand",
-                                             "title":  "SSH Workspace: Zusatzbefehl entfernen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.runExtraCommand",
-                                             "title":  "SSH Workspace: Zusatzbefehl ausfuehren"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.startFileAction",
-                                             "title":  "SSH Workspace: Datei starten"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.stopFileAction",
-                                             "title":  "SSH Workspace: Datei stoppen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.restartFileAction",
-                                             "title":  "SSH Workspace: Datei neustarten"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.statusFileAction",
-                                             "title":  "SSH Workspace: Datei-Status abrufen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.copyPath",
-                                             "title":  "SSH Workspace: Pfad kopieren"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.updateMetadata",
-                                             "title":  "SSH Workspace: Metadaten aktualisieren"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.addSavedCommand",
-                                             "title":  "SSH Workspace: Befehl hinzufuegen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.editSavedCommand",
-                                             "title":  "SSH Workspace: Befehl bearbeiten"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.duplicateSavedCommand",
-                                             "title":  "SSH Workspace: Befehl duplizieren"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.deleteSavedCommand",
-                                             "title":  "SSH Workspace: Befehl loeschen"
-                                         },
-                                         {
-                                             "command":  "sshWorkspace.runSavedCommand",
-                                             "title":  "SSH Workspace: Befehl ausfuehren"
-                                         }
-                                     ],
-                        "viewsContainers":  {
-                                                "activitybar":  [
-                                                                    {
-                                                                        "id":  "sshWorkspace",
-                                                                        "title":  "SSH Workspace",
-                                                                        "icon":  "resources/ssh-workspace.svg"
-                                                                    }
-                                                                ]
-                                            },
-                        "views":  {
-                                      "sshWorkspace":  [
-                                                           {
-                                                               "id":  "sshWorkspace.actions",
-                                                               "name":  "Aktionen",
-                                                               "icon":  "resources/ssh-workspace.svg"
-                                                           },
-                                                           {
-                                                               "id":  "sshWorkspace.work",
-                                                               "name":  "Arbeitsseite",
-                                                               "icon":  "resources/ssh-workspace.svg"
-                                                           },
-                                                           {
-                                                               "id":  "sshWorkspace.system",
-                                                               "name":  "System",
-                                                               "icon":  "resources/ssh-workspace.svg"
-                                                           },
-                                                           {
-                                                               "id":  "sshWorkspace.notes",
-                                                               "name":  "Notizen",
-                                                               "icon":  "resources/ssh-workspace.svg"
-                                                           }
-                                                       ]
-                                  },
-                        "menus":  {
-                                      "commandPalette":  [
-                                                             {
-                                                                 "command":  "sshWorkspace.openFile",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.copyPath",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.deleteComment",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.editControlCommands",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.addExtraCommand",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.removeExtraCommand",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.runExtraCommand",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.startFileAction",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.stopFileAction",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.restartFileAction",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.statusFileAction",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.editDisplayName",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.clearDisplayName",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.openSystemStatus",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.deleteNote",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.editSavedCommand",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.duplicateSavedCommand",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.deleteSavedCommand",
-                                                                 "when":  "false"
-                                                             },
-                                                             {
-                                                                 "command":  "sshWorkspace.runSavedCommand",
-                                                                 "when":  "false"
-                                                             }
-                                                         ],
-                                      "view/item/context":  [
-                                                                {
-                                                                    "command":  "sshWorkspace.openFile",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "inline@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.editComment",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "2_edit@3"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.deleteComment",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "2_edit@4"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.editDisplayName",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "2_edit@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.clearDisplayName",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "2_edit@2"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.copyPath",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "3_copy@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.editControlCommands",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "4_actions@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.addExtraCommand",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "4_actions@6"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.startFileAction",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "4_actions@2"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.stopFileAction",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "4_actions@3"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.restartFileAction",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "4_actions@4"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.statusFileAction",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "4_actions@5"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.updateMetadata",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == trackedFile",
-                                                                    "group":  "5_refresh@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.openFile",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == logEntry",
-                                                                    "group":  "inline@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.runExtraCommand",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == extraFileAction",
-                                                                    "group":  "inline@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.removeExtraCommand",
-                                                                    "when":  "view == sshWorkspace.work \u0026\u0026 viewItem == extraFileAction",
-                                                                    "group":  "2_edit@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.openNotes",
-                                                                    "when":  "view == sshWorkspace.notes \u0026\u0026 viewItem == noteFile",
-                                                                    "group":  "inline@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.openNotes",
-                                                                    "when":  "view == sshWorkspace.notes \u0026\u0026 viewItem == noteFileProtected",
-                                                                    "group":  "inline@1"
-                                                                },
-                                                                {
-                                                                    "command":  "sshWorkspace.deleteNote",
-                                                                    "when":  "view == sshWorkspace.notes \u0026\u0026 viewItem == noteFile",
-                                                                    "group":  "2_edit@1"
-                                                                },
-                                                                {
-                                                                    "group":  "inline@1",
-                                                                    "command":  "sshWorkspace.runSavedCommand",
-                                                                    "when":  "view == sshWorkspace.actions \u0026\u0026 viewItem == savedCommand"
-                                                                },
-                                                                {
-                                                                    "group":  "2_edit@1",
-                                                                    "command":  "sshWorkspace.editSavedCommand",
-                                                                    "when":  "view == sshWorkspace.actions \u0026\u0026 viewItem == savedCommand"
-                                                                },
-                                                                {
-                                                                    "group":  "2_edit@2",
-                                                                    "command":  "sshWorkspace.duplicateSavedCommand",
-                                                                    "when":  "view == sshWorkspace.actions \u0026\u0026 viewItem == savedCommand"
-                                                                },
-                                                                {
-                                                                    "group":  "2_edit@3",
-                                                                    "command":  "sshWorkspace.deleteSavedCommand",
-                                                                    "when":  "view == sshWorkspace.actions \u0026\u0026 viewItem == savedCommand"
-                                                                }
-                                                            ]
-                                  },
-                        "configuration":  {
-                                              "title":  "SSH Workspace",
-                                              "properties":  {
-                                                                 "sshWorkspace.language":  {
-                                                                                               "type":  "string",
-                                                                                               "default":  "de",
-                                                                                               "enum":  [
-                                                                                                            "de",
-                                                                                                            "en"
-                                                                                                        ],
-                                                                                               "enumDescriptions":  [
-                                                                                                                        "Deutsch",
-                                                                                                                        "English"
-                                                                                                                    ],
-                                                                                               "description":  "Language for SSH Workspace tree view labels, prompts, and notifications. Manifest-provided view names and command titles require a window reload and may still follow VS Code\u0027s static extension manifest handling."
-                                                                                           }
-                                                             }
-                                          }
-                    },
-    "scripts":  {
-                    "compile":  "tsc -p ./",
-                    "package":  "vsce package --out ssh-workspace-0.3.6.vsix",
-                    "publish:marketplace":  "vsce publish",
-                    "watch":  "tsc -watch -p ./",
-                    "vscode:prepublish":  "npm run compile"
-                },
-    "devDependencies":  {
-                            "@types/node":  "^20.11.30",
-                            "@types/vscode":  "^1.92.0",
-                            "@vscode/vsce":  "^3.9.1",
-                            "typescript":  "^5.4.5"
-                        }
+  "name": "ssh-workspace",
+  "displayName": "SSH Workspace",
+  "description": "A small Remote-SSH workspace helper for system notes, server file tracking, and basic system information.",
+  "version": "0.4.0",
+  "publisher": "ArbtoS",
+  "license": "MIT",
+  "icon": "resources/ssh-workspace.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArbtoS/SSH-Workspace.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ArbtoS/SSH-Workspace/issues"
+  },
+  "homepage": "https://github.com/ArbtoS/SSH-Workspace#readme",
+  "keywords": [
+    "remote-ssh",
+    "server",
+    "workspace",
+    "notes",
+    "linux"
+  ],
+  "engines": {
+    "vscode": "^1.92.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "galleryBanner": {
+    "color": "#101820",
+    "theme": "dark"
+  },
+  "main": "./out/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "sshWorkspace.initialize",
+        "title": "SSH Workspace: Initialisieren"
+      },
+      {
+        "command": "sshWorkspace.refresh",
+        "title": "SSH Workspace: Aktualisieren"
+      },
+      {
+        "command": "sshWorkspace.recreateData",
+        "title": "SSH Workspace: Daten neu erstellen"
+      },
+      {
+        "command": "sshWorkspace.openNotes",
+        "title": "SSH Workspace: Notizen oeffnen"
+      },
+      {
+        "command": "sshWorkspace.addNote",
+        "title": "SSH Workspace: Neue Notiz"
+      },
+      {
+        "command": "sshWorkspace.deleteNote",
+        "title": "SSH Workspace: Notiz loeschen"
+      },
+      {
+        "command": "sshWorkspace.openFile",
+        "title": "SSH Workspace: Datei oeffnen"
+      },
+      {
+        "command": "sshWorkspace.trackCurrentFile",
+        "title": "SSH Workspace: Aktuelle Datei tracken"
+      },
+      {
+        "command": "sshWorkspace.trackPath",
+        "title": "SSH Workspace: Pfad tracken"
+      },
+      {
+        "command": "sshWorkspace.editDisplayName",
+        "title": "SSH Workspace: Klarname bearbeiten"
+      },
+      {
+        "command": "sshWorkspace.clearDisplayName",
+        "title": "SSH Workspace: Klarname loeschen"
+      },
+      {
+        "command": "sshWorkspace.editComment",
+        "title": "SSH Workspace: Kommentar bearbeiten"
+      },
+      {
+        "command": "sshWorkspace.deleteComment",
+        "title": "SSH Workspace: Kommentar loeschen"
+      },
+      {
+        "command": "sshWorkspace.editControlCommands",
+        "title": "SSH Workspace: Service bearbeiten"
+      },
+      {
+        "command": "sshWorkspace.addExtraCommand",
+        "title": "SSH Workspace: Zusatzbefehl hinzufuegen"
+      },
+      {
+        "command": "sshWorkspace.removeExtraCommand",
+        "title": "SSH Workspace: Zusatzbefehl entfernen"
+      },
+      {
+        "command": "sshWorkspace.runExtraCommand",
+        "title": "SSH Workspace: Zusatzbefehl ausfuehren"
+      },
+      {
+        "command": "sshWorkspace.startFileAction",
+        "title": "SSH Workspace: Service starten"
+      },
+      {
+        "command": "sshWorkspace.stopFileAction",
+        "title": "SSH Workspace: Service stoppen"
+      },
+      {
+        "command": "sshWorkspace.restartFileAction",
+        "title": "SSH Workspace: Service neustarten"
+      },
+      {
+        "command": "sshWorkspace.statusFileAction",
+        "title": "SSH Workspace: Service-Status abrufen"
+      },
+      {
+        "command": "sshWorkspace.copyPath",
+        "title": "SSH Workspace: Pfad kopieren"
+      },
+      {
+        "command": "sshWorkspace.updateMetadata",
+        "title": "SSH Workspace: Metadaten aktualisieren"
+      },
+      {
+        "command": "sshWorkspace.addSavedCommand",
+        "title": "SSH Workspace: Befehl hinzufuegen"
+      },
+      {
+        "command": "sshWorkspace.editSavedCommand",
+        "title": "SSH Workspace: Befehl bearbeiten"
+      },
+      {
+        "command": "sshWorkspace.duplicateSavedCommand",
+        "title": "SSH Workspace: Befehl duplizieren"
+      },
+      {
+        "command": "sshWorkspace.deleteSavedCommand",
+        "title": "SSH Workspace: Befehl loeschen"
+      },
+      {
+        "command": "sshWorkspace.runSavedCommand",
+        "title": "SSH Workspace: Befehl ausfuehren"
+      },
+      {
+        "command": "sshWorkspace.clearSavedCommandRuns",
+        "title": "SSH Workspace: Letzte Ausgaben loeschen"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sshWorkspace",
+          "title": "SSH Workspace",
+          "icon": "resources/ssh-workspace.svg"
+        }
+      ]
+    },
+    "views": {
+      "sshWorkspace": [
+        {
+          "id": "sshWorkspace.actions",
+          "name": "Aktionen",
+          "icon": "resources/ssh-workspace.svg"
+        },
+        {
+          "id": "sshWorkspace.work",
+          "name": "Arbeitsseite",
+          "icon": "resources/ssh-workspace.svg"
+        },
+        {
+          "id": "sshWorkspace.system",
+          "name": "System",
+          "icon": "resources/ssh-workspace.svg"
+        },
+        {
+          "id": "sshWorkspace.notes",
+          "name": "Notizen",
+          "icon": "resources/ssh-workspace.svg"
+        }
+      ]
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "sshWorkspace.openFile",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.copyPath",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.deleteComment",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.editControlCommands",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.addExtraCommand",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.removeExtraCommand",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.runExtraCommand",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.startFileAction",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.stopFileAction",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.restartFileAction",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.statusFileAction",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.editDisplayName",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.clearDisplayName",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.deleteNote",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.editSavedCommand",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.duplicateSavedCommand",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.deleteSavedCommand",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.runSavedCommand",
+          "when": "false"
+        },
+        {
+          "command": "sshWorkspace.clearSavedCommandRuns",
+          "when": "false"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "sshWorkspace.openFile",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "inline@1"
+        },
+        {
+          "command": "sshWorkspace.editComment",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "2_edit@3"
+        },
+        {
+          "command": "sshWorkspace.deleteComment",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "2_edit@4"
+        },
+        {
+          "command": "sshWorkspace.editDisplayName",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "2_edit@1"
+        },
+        {
+          "command": "sshWorkspace.clearDisplayName",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "2_edit@2"
+        },
+        {
+          "command": "sshWorkspace.copyPath",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "3_copy@1"
+        },
+        {
+          "command": "sshWorkspace.editControlCommands",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@1"
+        },
+        {
+          "command": "sshWorkspace.addExtraCommand",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@6"
+        },
+        {
+          "command": "sshWorkspace.startFileAction",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@2"
+        },
+        {
+          "command": "sshWorkspace.stopFileAction",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@3"
+        },
+        {
+          "command": "sshWorkspace.restartFileAction",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@4"
+        },
+        {
+          "command": "sshWorkspace.statusFileAction",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "4_actions@5"
+        },
+        {
+          "command": "sshWorkspace.updateMetadata",
+          "when": "view == sshWorkspace.work && viewItem == trackedFile",
+          "group": "5_refresh@1"
+        },
+        {
+          "command": "sshWorkspace.openFile",
+          "when": "view == sshWorkspace.work && viewItem == logEntry",
+          "group": "inline@1"
+        },
+        {
+          "command": "sshWorkspace.runExtraCommand",
+          "when": "view == sshWorkspace.work && viewItem == extraFileAction",
+          "group": "inline@1"
+        },
+        {
+          "command": "sshWorkspace.removeExtraCommand",
+          "when": "view == sshWorkspace.work && viewItem == extraFileAction",
+          "group": "2_edit@1"
+        },
+        {
+          "command": "sshWorkspace.openNotes",
+          "when": "view == sshWorkspace.notes && viewItem == noteFile",
+          "group": "inline@1"
+        },
+        {
+          "command": "sshWorkspace.openNotes",
+          "when": "view == sshWorkspace.notes && viewItem == noteFileProtected",
+          "group": "inline@1"
+        },
+        {
+          "command": "sshWorkspace.deleteNote",
+          "when": "view == sshWorkspace.notes && viewItem == noteFile",
+          "group": "2_edit@1"
+        },
+        {
+          "group": "inline@1",
+          "command": "sshWorkspace.runSavedCommand",
+          "when": "view == sshWorkspace.actions && viewItem == savedCommand"
+        },
+        {
+          "group": "2_edit@1",
+          "command": "sshWorkspace.editSavedCommand",
+          "when": "view == sshWorkspace.actions && viewItem == savedCommand"
+        },
+        {
+          "group": "2_edit@2",
+          "command": "sshWorkspace.duplicateSavedCommand",
+          "when": "view == sshWorkspace.actions && viewItem == savedCommand"
+        },
+        {
+          "group": "2_edit@3",
+          "command": "sshWorkspace.deleteSavedCommand",
+          "when": "view == sshWorkspace.actions && viewItem == savedCommand"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "SSH Workspace",
+      "properties": {
+        "sshWorkspace.language": {
+          "type": "string",
+          "default": "de",
+          "enum": [
+            "de",
+            "en"
+          ],
+          "enumDescriptions": [
+            "Deutsch",
+            "English"
+          ],
+          "description": "Language for SSH Workspace tree view labels, prompts, and notifications. Manifest-provided view names and command titles require a window reload and may still follow VS Code's static extension manifest handling."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "package": "vsce package --out ssh-workspace-0.4.0.vsix",
+    "publish:marketplace": "vsce publish",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/vscode": "^1.92.0",
+    "@vscode/vsce": "^3.9.1",
+    "typescript": "^5.4.5"
+  }
 }

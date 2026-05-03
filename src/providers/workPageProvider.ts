@@ -181,28 +181,28 @@ export class WorkPageProvider implements vscode.TreeDataProvider<WorkNode>, vsco
           new DetailItem(`${t("comment")}: ${file.comment || "-"}`),
           new DetailItem(`${t("service")}: ${file.controlCommands?.serviceName || "-"}`),
           new FileActionItem(
-            t("actionStart"),
+            t("serviceStart"),
             "sshWorkspace.startFileAction",
             file,
             resolveControlCommand(file.controlCommands, "start"),
             "play"
           ),
           new FileActionItem(
-            t("actionStop"),
+            t("serviceStop"),
             "sshWorkspace.stopFileAction",
             file,
             resolveControlCommand(file.controlCommands, "stop"),
             "primitive-square"
           ),
           new FileActionItem(
-            t("actionRestart"),
+            t("serviceRestart"),
             "sshWorkspace.restartFileAction",
             file,
             resolveControlCommand(file.controlCommands, "restart"),
             "refresh"
           ),
           new FileActionItem(
-            t("actionStatus"),
+            t("serviceStatus"),
             "sshWorkspace.statusFileAction",
             file,
             resolveControlCommand(file.controlCommands, "status"),

@@ -9,6 +9,7 @@ import {
   addExtraCommand,
   addNote,
   addSavedCommand,
+  clearSavedCommandRuns,
   clearDisplayName,
   copyPath,
   deleteComment,
@@ -20,9 +21,7 @@ import {
   editDisplayName,
   editSavedCommand,
   initializeWorkspace,
-  openNotes,
-  openSystemStatus,
-  openTrackedFile,
+  openNotes,  openTrackedFile,
   recreateWorkspaceData,
   refreshWorkspace,
   removeExtraCommand,
@@ -69,7 +68,7 @@ export function registerCommands(
   registerSafeCommand(context, "sshWorkspace.duplicateSavedCommand", (input) => duplicateSavedCommand(store, views, input));
   registerSafeCommand(context, "sshWorkspace.deleteSavedCommand", (input) => deleteSavedCommand(store, views, input));
   registerSafeCommand(context, "sshWorkspace.runSavedCommand", (input) => runSavedCommand(store, views, input));
-  registerSafeCommand(context, "sshWorkspace.openSystemStatus", () => openSystemStatus(store));
+  registerSafeCommand(context, "sshWorkspace.clearSavedCommandRuns", () => clearSavedCommandRuns(store, views));
   registerSafeCommand(context, "sshWorkspace.openFile", (input) => openTrackedFile(store, views, input));
   registerSafeCommand(context, "sshWorkspace.trackCurrentFile", () => trackCurrentFile(store, views));
   registerSafeCommand(context, "sshWorkspace.trackPath", () => trackPath(store, views));

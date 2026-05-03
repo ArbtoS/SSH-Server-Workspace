@@ -45,6 +45,7 @@ export interface WorkspaceCommandRun {
   finishedAt: string;
   exitCode: number | null;
   success: boolean;
+  interactive?: boolean;
   output: string;
 }
 

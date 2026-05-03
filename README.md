@@ -1,4 +1,4 @@
-# SSH Workspace
+﻿# SSH Workspace
 
 SSH Workspace is a small Visual Studio Code extension for users who are already connected to a Linux server through VS Code Remote-SSH. It does not create SSH connections, manage SSH hosts, or edit SSH configuration files.
 
@@ -6,9 +6,9 @@ This project was developed with support from ChatGPT. The extension scope, behav
 
 ---
 
-### Überblick
+## Deutsch
 
-SSH Workspace ist eine kleine VS-Code-Extension für Remote-SSH-Workspaces. Sie hilft dabei, wichtige Serverdateien bewusst zu tracken, einfache Systeminfos zu sehen und Notizen direkt auf dem verbundenen Server abzulegen.
+SSH Workspace ist eine kleine VS-Code-Extension für Remote-SSH-Workspaces. Sie hilft dabei, wichtige Serverdateien bewusst zu tracken, einfache Systeminfos zu sehen, Notizen direkt auf dem verbundenen Server abzulegen und häufige Befehle zentral zu sammeln.
 
 Die Extension läuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt für Verbindung, Authentifizierung und Host-Verwaltung zuständig.
 
@@ -19,14 +19,14 @@ Die Extension läuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt 
 - Initialisierung von `~/.ssh-workspace/` auf dem Remote-Host
 - Datei-Tracking für bewusst ausgewählte Serverdateien
 - Klarname und Kommentar pro getrackter Datei
-- Optionale Start/Stop/Restart-Befehle pro getrackter Datei
 - Optionaler Systemd-Service pro Datei für automatische Standardaktionen
 - Zusätzliche frei benennbare Befehle pro Datei
-- Drag-and-Drop-Sortierung in der Arbeitsliste
+- Drag-and-Drop-Sortierung in Arbeitsliste, Notizen und globaler Befehlsliste
 - Rohlog für erkannte Änderungen an getrackten Dateien
 - Systeminfos wie Hostname, OS, Kernel, Architektur und Haupt-IP
-- Notizen in `NOTIZEN.md`
-- Manuell pflegbarer Systemstatus in `SYSTEMSTATUS.md`
+- Allgemeine Notiz in `NOTIZEN.md`
+- Zusätzliche einzelne Notizdateien unter `~/.ssh-workspace/notes/`
+- Globale gespeicherte Befehle mit Name, Command, Notiz und den letzten 10 Ausführungen samt Output
 - Sprachumschaltung Deutsch/Englisch über `sshWorkspace.language`
 
 ### Nicht enthalten
@@ -35,8 +35,6 @@ Die Extension läuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt 
 - Keine SSH-Config-Verwaltung
 - Keine Server-/Host-Merkliste
 - Keine Services oder Hintergrundkomponente
-- Keine Webview
-- Kein Cockpit-Ersatz
 - Kein automatisches Tracking beliebiger Terminal-Edits
 - Kein Parsing von `~/.bash_history` als Rohlog-Quelle
 
@@ -55,16 +53,16 @@ Beim Initialisieren legt die Extension auf dem verbundenen Remote-Host diesen Or
 Darin liegen:
 
 ```text
-SYSTEMSTATUS.md
 NOTIZEN.md
+notes/
 workspace-data.json
 ```
 
 Vor dem Command `SSH Workspace: Initialisieren` wird nichts auf dem Server angelegt.
 
-Hinweis zur Umbenennung: Aeltere Versionen haben ihre Remote-Daten unter `~/.ssh-server-workspace/` gespeichert. Die aktuelle Version verwendet `~/.ssh-workspace/`. Falls du bestehende Daten uebernehmen willst, musst du sie auf dem Remote-Host einmalig in den neuen Ordner kopieren oder verschieben.
+Hinweis zur Umbenennung: Ältere Versionen haben ihre Remote-Daten unter `~/.ssh-server-workspace/` gespeichert. Die aktuelle Version verwendet `~/.ssh-workspace/`. Falls du bestehende Daten übernehmen willst, musst du sie auf dem Remote-Host einmalig in den neuen Ordner kopieren oder verschieben.
 
-#### Aktionen
+### Aktionen
 
 Bündelt die globalen Befehle:
 
@@ -72,10 +70,11 @@ Bündelt die globalen Befehle:
 - Aktualisieren
 - Pfad tracken
 - Aktuelle Datei tracken
-- Notiz hinzufügen
+- Neue Notiz
+- Befehl hinzufügen
 - Daten neu erstellen
 
-#### Arbeitsseite
+### Arbeitsseite
 
 Die Arbeitsseite besteht aus:
 
@@ -87,13 +86,13 @@ Eine Datei kann auf zwei Wegen aufgenommen werden:
 - `Aktuelle Datei tracken`: trackt die Datei, die gerade im VS-Code-Editor aktiv ist
 - `Pfad tracken`: nimmt einen absoluten Remote-Pfad auf, zum Beispiel `/etc/systemd/system/hostapd-healthcheck.timer`
 
-Pro getrackter Datei können Klarname und Kommentar gepflegt werden. Die Arbeitsliste kann per Drag and Drop manuell sortiert werden. Interne Server-Workspace-Dateien wie `NOTIZEN.md`, `SYSTEMSTATUS.md` und `workspace-data.json` werden nicht in der Arbeitsliste angezeigt.
+Pro getrackter Datei können Klarname und Kommentar gepflegt werden. Die Arbeitsliste kann per Drag and Drop manuell sortiert werden. Interne SSH-Workspace-Dateien wie `NOTIZEN.md` und `workspace-data.json` werden nicht in der Arbeitsliste angezeigt.
 
-Zusätzlich kann jede getrackte Datei einen optionalen Systemd-Service hinterlegen, zum Beispiel `nginx.service`. Dann werden `Starten`, `Stoppen`, `Neustarten` und `Status` automatisch über `systemctl` im integrierten Remote-Terminal ausgeführt.
+Zusätzlich kann jede getrackte Datei einen optionalen Systemd-Service hinterlegen, zum Beispiel `nginx.service`. Daraus werden `Starten`, `Stoppen`, `Neustarten` und `Status` automatisch über `systemctl` im integrierten Remote-Terminal abgeleitet.
 
-Für Sonderfälle können Standardaktionen weiterhin mit eigenen Shell-Befehlen überschrieben werden. Außerdem lassen sich pro Datei zusätzliche frei benennbare Befehle anlegen und später wieder entfernen.
+Für Sonderfälle lassen sich pro Datei zusätzliche frei benennbare Befehle anlegen und später wieder entfernen.
 
-#### System
+### System
 
 Zeigt einfache Systeminfos:
 
@@ -105,14 +104,13 @@ Zeigt einfache Systeminfos:
 - Haupt-IP
 - letzter Refresh
 
-#### Notizen
+### Notizen
 
 Die Notizen-View bietet:
 
-- `Notiz hinzufügen`: schreibt eine neue Zeile in `NOTIZEN.md`
-- `NOTIZEN.md`: öffnet die Notizdatei zur freien Bearbeitung
-- `SYSTEMSTATUS.md`: öffnet die Datei für Rolle, Zweck und Bemerkungen
-- Anzeige der letzten Notizzeilen
+- `Neue Notiz`: erstellt eine eigene neue Markdown-Datei
+- `NOTIZEN.md`: allgemeine dauerhafte Notizdatei
+- zusätzliche Notizdateien mit Drag and Drop sortierbar und löschbar
 
 ### Installation zum Testen
 
@@ -174,9 +172,9 @@ ChatGPT war an Planung, Code-Erstellung und Iteration dieser Extension beteiligt
 
 ---
 
-### Overview
+## English
 
-SSH Workspace is a small VS Code extension for Remote-SSH workspaces. It helps users deliberately track important server files, view basic system information, and keep notes directly on the connected server.
+SSH Workspace is a small VS Code extension for Remote-SSH workspaces. It helps users deliberately track important server files, view basic system information, keep notes directly on the connected server, and maintain a small list of frequently used commands.
 
 The extension runs inside an already connected remote workspace. VS Code Remote-SSH remains responsible for connection handling, authentication, and host management.
 
@@ -187,14 +185,14 @@ The extension runs inside an already connected remote workspace. VS Code Remote-
 - Initializes `~/.ssh-workspace/` on the remote host
 - File tracking for deliberately selected server files
 - Display name and comment per tracked file
-- Optional start/stop/restart commands per tracked file
 - Optional systemd service per file for automatic default actions
 - Additional custom-named commands per file
-- Drag-and-drop ordering in the work list
+- Drag-and-drop ordering in the work list, notes, and global command list
 - Raw log for detected changes in tracked files
 - System information such as hostname, OS, kernel, architecture, and main IP
-- Notes in `NOTIZEN.md`
-- Manually maintained system status in `SYSTEMSTATUS.md`
+- General notes in `NOTIZEN.md`
+- Additional standalone note files under `~/.ssh-workspace/notes/`
+- Global saved commands with name, command, note, and the last 10 runs including output
 - German/English language switch through `sshWorkspace.language`
 
 ### Not Included
@@ -203,8 +201,6 @@ The extension runs inside an already connected remote workspace. VS Code Remote-
 - No SSH config management
 - No saved SSH host list
 - No service or background backend component
-- No webview
-- No Cockpit replacement
 - No automatic tracking of arbitrary terminal edits
 - No parsing of `~/.bash_history` as a raw-log source
 
@@ -223,25 +219,26 @@ Initialization creates this folder on the connected remote host:
 It contains:
 
 ```text
-SYSTEMSTATUS.md
 NOTIZEN.md
+notes/
 workspace-data.json
 ```
 
 No server-side files are created before running `SSH Workspace: Initialisieren`.
 
-#### Aktionen
+### Actions
 
-Collects global commands:
+Collects the global commands:
 
-- Initialisieren (initialize)
-- Aktualisieren (refresh)
-- Pfad tracken (track path)
-- Aktuelle Datei tracken (track current file)
-- Notiz hinzufügen (add note)
-- Daten neu erstellen (recreate data)
+- Initialize
+- Refresh
+- Track path
+- Track current file
+- New note
+- Add command
+- Recreate data
 
-#### Arbeitsseite
+### Work Page
 
 The work page contains:
 
@@ -253,13 +250,13 @@ A file can be added in two ways:
 - `Aktuelle Datei tracken`: tracks the file currently active in the VS Code editor
 - `Pfad tracken`: tracks an absolute remote path, for example `/etc/systemd/system/hostapd-healthcheck.timer`
 
-Each tracked file can have a display name and a comment. The work list can be manually sorted with drag and drop. Internal SSH Workspace files such as `NOTIZEN.md`, `SYSTEMSTATUS.md`, and `workspace-data.json` are hidden from the work list.
+Each tracked file can have a display name and a comment. The work list can be manually sorted with drag and drop. Internal SSH Workspace files such as `NOTIZEN.md` and `workspace-data.json` are hidden from the work list.
 
-Each tracked file can also store an optional systemd service such as `nginx.service`. When set, `Start`, `Stop`, `Restart`, and `Status` are derived automatically through `systemctl` and executed in the integrated remote terminal.
+Each tracked file can also store an optional systemd service such as `nginx.service`. `Start`, `Stop`, `Restart`, and `Status` are derived automatically from that service and executed through `systemctl` in the integrated remote terminal.
 
-For special cases, these default actions can still be overridden with custom shell commands. In addition, each tracked file can store extra custom-named commands that can be added and removed later.
+For special cases, each tracked file can also store additional custom-named commands that can be added and removed later.
 
-#### System
+### System
 
 Shows basic system information:
 
@@ -271,14 +268,13 @@ Shows basic system information:
 - Main IP
 - Last refresh
 
-#### Notizen
+### Notes
 
 The notes view offers:
 
-- `Notiz hinzufügen`: appends a new line to `NOTIZEN.md`
-- `NOTIZEN.md`: opens the notes file for manual editing
-- `SYSTEMSTATUS.md`: opens the file for role, purpose, and remarks
-- A preview of the latest note lines
+- `Neue Notiz`: creates a separate Markdown note file
+- `NOTIZEN.md`: general long-lived notes file
+- additional note files that can be reordered with drag and drop and deleted
 
 ### Test Installation
 

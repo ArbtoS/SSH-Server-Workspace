@@ -153,14 +153,6 @@ export async function deleteNote(store: WorkspaceStore, views: RefreshableViews,
   vscode.window.showInformationMessage(t("noteDeleted", { title: note.title }));
 }
 
-export async function openSystemStatus(store: WorkspaceStore): Promise<void> {
-  if (!(await store.isInitialized())) {
-    vscode.window.showWarningMessage(t("warningInitializeFirst"));
-    return;
-  }
-
-  await vscode.window.showTextDocument(store.systemStatusUri(), { preview: false });
-}
 
 export async function openTrackedFile(store: WorkspaceStore, views: RefreshableViews, input?: unknown): Promise<void> {
   const filePath = extractFilePath(input);
@@ -753,7 +745,49 @@ export async function deleteSavedCommand(store: WorkspaceStore, views: Refreshab
   vscode.window.showInformationMessage(t("savedCommandDeleted", { name: loaded.savedCommand.name }));
 }
 
-async function executeSavedCommand(command: string): Promise<{ success: boolean; exitCode: number | null; output: string }> {
+export async function clearSavedCommandRuns(store: WorkspaceStore, views: RefreshableViews): Promise<void> {
+  const data = await loadRequiredData(store);
+  if (!data) {
+    return;
+  }
+
+  const confirmation = await vscode.window.showWarningMessage(
+    t("clearSavedCommandRunsQuestion"),
+    { modal: true },
+    t("clearSavedCommandRunsConfirm")
+  );
+  if (confirmation !== t("clearSavedCommandRunsConfirm")) {
+    return;
+  }
+
+  store.clearSavedCommandRuns(data);
+  await store.save(data);
+  views.refreshAll();
+  vscode.window.showInformationMessage(t("savedCommandRunsCleared"));
+}
+
+function currentUserIsRoot(): boolean {
+  return typeof process.getuid === "function" && process.getuid() === 0;
+}
+
+function commandNeedsInteractiveTerminal(command: string): boolean {
+  return /(^|\s)sudo(\s|$)/.test(command) && !currentUserIsRoot();
+}
+
+async function executeSavedCommand(
+  commandName: string,
+  command: string
+): Promise<{ success: boolean; exitCode: number | null; output: string; interactive: boolean }> {
+  if (commandNeedsInteractiveTerminal(command)) {
+    runCommandInWorkspaceTerminal(commandName, command);
+    return {
+      success: true,
+      exitCode: null,
+      output: t("interactiveOutput"),
+      interactive: true
+    };
+  }
+
   return new Promise((resolve) => {
     exec(
       command,
@@ -768,7 +802,8 @@ async function executeSavedCommand(command: string): Promise<{ success: boolean;
         resolve({
           success: !error,
           exitCode,
-          output
+          output,
+          interactive: false
         });
       }
     );
@@ -788,7 +823,7 @@ export async function runSavedCommand(store: WorkspaceStore, views: RefreshableV
   }
 
   const startedAt = toLocalIsoString();
-  const result = await executeSavedCommand(loaded.savedCommand.command);
+  const result = await executeSavedCommand(loaded.savedCommand.name, loaded.savedCommand.command);
   const finishedAt = toLocalIsoString();
 
   store.addSavedCommandRun(loaded.data, {
@@ -799,9 +834,16 @@ export async function runSavedCommand(store: WorkspaceStore, views: RefreshableV
     finishedAt,
     exitCode: result.exitCode,
     success: result.success,
+    interactive: result.interactive,
     output: result.output
   });
   await store.save(loaded.data);
+  views.refreshAll();
+
+  if (result.interactive) {
+    vscode.window.showInformationMessage(t("savedCommandRunInteractive", { name: loaded.savedCommand.name }));
+    return;
+  }
 
   if (result.success) {
     vscode.window.showInformationMessage(t("savedCommandRunSuccess", { name: loaded.savedCommand.name }));

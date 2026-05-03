@@ -7,6 +7,8 @@ import { CommandItem, MessageItem } from "./commonItems";
 
 type ActionNode = ActionSectionItem | CommandItem | SavedCommandItem | SavedCommandRunItem | SavedCommandRunDetailItem | MessageItem;
 const savedCommandMime = "application/vnd.ssh-workspace.saved-command";
+const outputPreviewLines = 10;
+const outputPreviewLineLength = 180;
 
 class ActionSectionItem extends vscode.TreeItem {
   public constructor(public readonly section: "actions" | "commands" | "history", label: string) {
@@ -45,8 +47,8 @@ class SavedCommandRunItem extends vscode.TreeItem {
   public constructor(public readonly run: WorkspaceCommandRun) {
     super(run.name, vscode.TreeItemCollapsibleState.Collapsed);
     this.contextValue = "savedCommandRun";
-    this.description = `${run.success ? t("runSuccess") : t("runFailed")} | ${formatDisplayDate(run.finishedAt, true)}`;
-    this.iconPath = new vscode.ThemeIcon(run.success ? "pass" : "error");
+    this.description = `${run.interactive ? t("runInteractive") : run.success ? t("runSuccess") : t("runFailed")} | ${formatDisplayDate(run.finishedAt, true)}`;
+    this.iconPath = new vscode.ThemeIcon(run.interactive ? "terminal" : run.success ? "pass" : "error");
     this.tooltip = new vscode.MarkdownString(
       [
         `**${run.name}**`,
@@ -58,6 +60,23 @@ class SavedCommandRunItem extends vscode.TreeItem {
       ].join("\n")
     );
   }
+}
+
+function buildOutputPreview(output: string): string[] {
+  if (!output.trim()) {
+    return [t("noOutput")];
+  }
+
+  const rawLines = output.split(/\r?\n/).filter((line) => line.trim());
+  const limitedLines = rawLines.slice(0, outputPreviewLines).map((line) =>
+    line.length > outputPreviewLineLength ? `${line.slice(0, outputPreviewLineLength - 1)}…` : line
+  );
+
+  if (rawLines.length > outputPreviewLines) {
+    limitedLines.push(t("outputTruncated"));
+  }
+
+  return limitedLines;
 }
 
 export class ActionsProvider implements vscode.TreeDataProvider<ActionNode>, vscode.TreeDragAndDropController<ActionNode> {
@@ -114,7 +133,21 @@ export class ActionsProvider implements vscode.TreeDataProvider<ActionNode>, vsc
       }
 
       const runs = this.store.listSavedCommandRuns(data).sort((left, right) => compareIsoDesc(left.finishedAt, right.finishedAt));
-      return runs.length > 0 ? runs.map((entry) => new SavedCommandRunItem(entry)) : [new MessageItem(t("noSavedCommandRuns"))];
+      const nodes: ActionNode[] = [
+        new CommandItem(
+          t("actionClearSavedCommandRuns"),
+          { command: "sshWorkspace.clearSavedCommandRuns", title: t("actionClearSavedCommandRuns") },
+          "trash"
+        )
+      ];
+
+      if (runs.length === 0) {
+        nodes.push(new MessageItem(t("noSavedCommandRuns")));
+        return nodes;
+      }
+
+      nodes.push(...runs.map((entry) => new SavedCommandRunItem(entry)));
+      return nodes;
     }
 
     if (element instanceof SavedCommandRunItem) {
@@ -125,10 +158,7 @@ export class ActionsProvider implements vscode.TreeDataProvider<ActionNode>, vsc
         new SavedCommandRunDetailItem(`${t("exitCode")}: ${element.run.exitCode ?? "-"}`)
       ];
 
-      const outputLines = element.run.output
-        ? element.run.output.split(/\r?\n/).filter((line) => line.trim()).slice(0, 20)
-        : [t("noOutput")];
-
+      const outputLines = buildOutputPreview(element.run.output || (element.run.interactive ? t("interactiveOutput") : ""));
       details.push(new SavedCommandRunDetailItem(`${t("outputLabel")}:`));
       for (const line of outputLines) {
         details.push(new SavedCommandRunDetailItem(line));

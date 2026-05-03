@@ -10,7 +10,7 @@ import {
   writeTextFile
 } from "./fileSystem";
 import { getSshWorkspacePaths, SshWorkspacePaths } from "./paths";
-import { notesTemplate, systemStatusTemplate } from "./templates";
+import { notesTemplate } from "./templates";
 import {
   createDefaultWorkspaceData,
   createEmptySystemInfo,
@@ -200,6 +200,7 @@ export class WorkspaceStore {
           finishedAt,
           exitCode: typeof candidate.exitCode === "number" ? candidate.exitCode : null,
           success: Boolean(candidate.success),
+          interactive: Boolean(candidate.interactive),
           output: candidate.output?.trim() || ""
         });
       }
@@ -240,9 +241,7 @@ export class WorkspaceStore {
 
   public isInternalPath(filePath: string): boolean {
     const resolvedPath = path.resolve(filePath);
-    if (
-      resolvedPath === path.resolve(this.paths.systemStatus) ||
-      resolvedPath === path.resolve(this.paths.notes) ||
+    if (      resolvedPath === path.resolve(this.paths.notes) ||
       resolvedPath === path.resolve(this.paths.data)
     ) {
       return true;
@@ -254,17 +253,13 @@ export class WorkspaceStore {
 
   public async isInitialized(): Promise<boolean> {
     return (
-      (await exists(this.paths.directory)) &&
-      (await exists(this.paths.systemStatus)) &&
-      (await exists(this.paths.notes)) &&
+      (await exists(this.paths.directory)) &&      (await exists(this.paths.notes)) &&
       (await exists(this.paths.data))
     );
   }
 
   public async initialize(): Promise<void> {
-    await ensureDirectory(this.paths.directory);
-    await ensureFile(this.paths.systemStatus, systemStatusTemplate);
-    await ensureFile(this.paths.notes, notesTemplate);
+    await ensureDirectory(this.paths.directory);    await ensureFile(this.paths.notes, notesTemplate);
     await ensureFile(this.paths.data, `${JSON.stringify(this.sanitize(createDefaultWorkspaceData()), null, 2)}\n`);
   }
 
@@ -420,6 +415,10 @@ export class WorkspaceStore {
     return next;
   }
 
+  public clearSavedCommandRuns(data: WorkspaceData): void {
+    data.savedCommandRuns = [];
+  }
+
   public removeSavedCommand(data: WorkspaceData, commandId: string): boolean {
     const commands = this.listSavedCommands(data);
     const next = commands.filter((entry) => entry.id !== commandId);
@@ -454,9 +453,5 @@ export class WorkspaceStore {
 
   public notesUri(filePath?: string): Uri {
     return Uri.file(filePath || this.paths.notes);
-  }
-
-  public systemStatusUri(): Uri {
-    return Uri.file(this.paths.systemStatus);
   }
 }

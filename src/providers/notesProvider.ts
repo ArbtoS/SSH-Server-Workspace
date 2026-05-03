@@ -5,7 +5,7 @@ import { WorkspaceNote } from "../core/types";
 import { WorkspaceStore } from "../core/workspaceStore";
 import { CommandItem, MessageItem } from "./commonItems";
 
-type NotesNode = CommandItem | MessageItem | NoteFileItem | SystemStatusItem;
+type NotesNode = CommandItem | MessageItem | NoteFileItem;
 const notesMime = "application/vnd.ssh-workspace.note-file";
 
 class NoteFileItem extends vscode.TreeItem {
@@ -23,17 +23,6 @@ class NoteFileItem extends vscode.TreeItem {
   }
 }
 
-class SystemStatusItem extends vscode.TreeItem {
-  public constructor() {
-    super(t("systemStatusFile"), vscode.TreeItemCollapsibleState.None);
-    this.contextValue = "systemStatusFile";
-    this.iconPath = new vscode.ThemeIcon("markdown");
-    this.command = {
-      command: "sshWorkspace.openSystemStatus",
-      title: t("systemStatusFile")
-    };
-  }
-}
 
 export class NotesProvider implements vscode.TreeDataProvider<NotesNode>, vscode.TreeDragAndDropController<NotesNode> {
   public readonly dragMimeTypes = [notesMime];
@@ -75,8 +64,7 @@ export class NotesProvider implements vscode.TreeDataProvider<NotesNode>, vscode
           },
           "add"
         ),
-        ...noteItems,
-        new SystemStatusItem()
+        ...noteItems
       ];
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
