@@ -26,7 +26,7 @@ Die Extension läuft im bereits verbundenen Remote-Workspace. Remote-SSH bleibt 
 - Systeminfos wie Hostname, OS, Kernel, Architektur und Haupt-IP
 - Allgemeine Notiz in `NOTIZEN.md`
 - Zusätzliche einzelne Notizdateien unter `~/.ssh-workspace/notes/`
-- Globale gespeicherte Befehle mit Name, Command, Notiz und den letzten 10 Ausführungen samt Output
+- Globale gespeicherte Befehle mit Name, Command, Notiz und den letzten 10 Ausführungen mit begrenzter Output-Vorschau
 - Sprachumschaltung Deutsch/Englisch über `sshWorkspace.language`
 
 ### Nicht enthalten
@@ -74,6 +74,14 @@ Bündelt die globalen Befehle:
 - Befehl hinzufügen
 - Daten neu erstellen
 
+Zusätzlich bietet `Letzte Ausgaben`:
+
+- begrenzte Vorschau der letzten 10 Befehlsausführungen
+- manuelles komplettes Leeren des Verlaufs
+- Kennzeichnung von Läufen, die im Terminal statt mit direkter Output-Erfassung ausgeführt wurden
+
+Wenn ein global gespeicherter Befehl `sudo` benötigt und du nicht als `root` arbeitest, startet SSH Workspace ihn im integrierten Terminal. So kann `sudo` eine Passwortabfrage anzeigen, statt sofort mit einem Exec-Fehler zu scheitern.
+
 ### Arbeitsseite
 
 Die Arbeitsseite besteht aus:
@@ -88,7 +96,7 @@ Eine Datei kann auf zwei Wegen aufgenommen werden:
 
 Pro getrackter Datei können Klarname und Kommentar gepflegt werden. Die Arbeitsliste kann per Drag and Drop manuell sortiert werden. Interne SSH-Workspace-Dateien wie `NOTIZEN.md` und `workspace-data.json` werden nicht in der Arbeitsliste angezeigt.
 
-Zusätzlich kann jede getrackte Datei einen optionalen Systemd-Service hinterlegen, zum Beispiel `nginx.service`. Daraus werden `Starten`, `Stoppen`, `Neustarten` und `Status` automatisch über `systemctl` im integrierten Remote-Terminal abgeleitet.
+Zusätzlich kann jede getrackte Datei einen optionalen Systemd-Service hinterlegen, zum Beispiel `nginx.service`. Daraus werden `Service starten`, `Service stoppen`, `Service neustarten` und `Service-Status` automatisch über `systemctl` im integrierten Remote-Terminal abgeleitet.
 
 Für Sonderfälle lassen sich pro Datei zusätzliche frei benennbare Befehle anlegen und später wieder entfernen.
 
@@ -238,6 +246,14 @@ Collects the global commands:
 - Add command
 - Recreate data
 
+In addition, `Recent Output` provides:
+
+- limited preview of the last 10 command runs
+- manual full clear of the saved-command history
+- explicit marking for runs that were launched in the terminal instead of direct captured execution
+
+If a global saved command needs `sudo` and you are not working as `root`, SSH Workspace starts it in the integrated terminal. That allows `sudo` to show a password prompt instead of failing immediately with a non-interactive exec error.
+
 ### Work Page
 
 The work page contains:
@@ -252,7 +268,7 @@ A file can be added in two ways:
 
 Each tracked file can have a display name and a comment. The work list can be manually sorted with drag and drop. Internal SSH Workspace files such as `NOTIZEN.md` and `workspace-data.json` are hidden from the work list.
 
-Each tracked file can also store an optional systemd service such as `nginx.service`. `Start`, `Stop`, `Restart`, and `Status` are derived automatically from that service and executed through `systemctl` in the integrated remote terminal.
+Each tracked file can also store an optional systemd service such as `nginx.service`. `Service start`, `Service stop`, `Service restart`, and `Service status` are derived automatically from that service and executed through `systemctl` in the integrated remote terminal.
 
 For special cases, each tracked file can also store additional custom-named commands that can be added and removed later.
 
@@ -275,8 +291,6 @@ The notes view offers:
 - `Neue Notiz`: creates a separate Markdown note file
 - `NOTIZEN.md`: general long-lived notes file
 - additional note files that can be reordered with drag and drop and deleted
-- `Recent Output`: limited preview of the last 10 command runs, with a manual clear action
-- `sudo` commands from the global command list can fall back to the integrated terminal so a password prompt is possible
 
 ### Test Installation
 
