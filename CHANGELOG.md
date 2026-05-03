@@ -1,4 +1,11 @@
-# Changelog
+﻿# Changelog
+
+## 0.4.0
+
+- Removed the obsolete SYSTEMSTATUS.md workflow and aligned notes/workspace storage around NOTIZEN.md, standalone note files, and workspace-data.json.
+- Renamed work-list service actions consistently to Service start/stop/restart/status.
+- Limited the visible output preview in Letzte Ausgaben and added a manual clear action for the saved-command history.
+- Saved commands that require sudo while running as a non-root user are now launched in the integrated terminal so sudo can prompt for a password instead of failing immediately.
 
 ## 0.3.6
 
