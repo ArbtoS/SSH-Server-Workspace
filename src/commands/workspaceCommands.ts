@@ -802,11 +802,8 @@ async function executeSavedCommand(
 
   const script = [
     "#!/usr/bin/env bash",
-    "set -o pipefail",
-    "{",
-    command,
-    `} 2>&1 | tee ${shellQuote(outputPath)}`,
-    "rc=${PIPESTATUS[0]}",
+    "script -qefc " + shellQuote(command) + " " + shellQuote(outputPath),
+    "rc=$?",
     `printf '%s' \"$rc\" > ${shellQuote(statusPath)}`
   ].join("\n");
 
@@ -891,3 +888,4 @@ export async function runSavedCommand(store: WorkspaceStore, views: RefreshableV
     vscode.window.showWarningMessage(t("savedCommandRunFailed", { name: loaded.savedCommand.name }));
   }
 }
+

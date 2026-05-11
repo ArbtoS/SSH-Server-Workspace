@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## 0.4.2
+
+- Switched saved-command capture from a tee pipeline to script(1) so terminal-visible command runs keep an interactive TTY for sudo password prompts.
+- This avoids foreground job stops for interactive commands caused by the previous non-TTY pipe-based capture path.
+
 ## 0.4.1
 
 - Global saved commands now run visibly in the integrated terminal again.
