@@ -1,7 +1,7 @@
-import * as path from "path";
-import { exec } from "child_process";
+﻿import * as path from "path";
 import * as vscode from "vscode";
 import { resolveControlCommand } from "../core/controlCommands";
+import { deleteFile, ensureDirectory, exists, readTextFile, writeTextFile } from "../core/fileSystem";
 import {
   addTrackedFileExtraCommand,
   removeTrackedFileExtraCommand,
@@ -766,20 +766,60 @@ export async function clearSavedCommandRuns(store: WorkspaceStore, views: Refres
   vscode.window.showInformationMessage(t("savedCommandRunsCleared"));
 }
 
-function currentUserIsRoot(): boolean {
-  return typeof process.getuid === "function" && process.getuid() === 0;
+function shellQuote(value: string): string {
+  return "'" + value.replace(/'/g, "'\"'\"'") + "'";
 }
 
-function commandNeedsInteractiveTerminal(command: string): boolean {
-  return /(^|\s)sudo(\s|$)/.test(command) && !currentUserIsRoot();
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForFile(filePath: string, timeoutMs: number): Promise<boolean> {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    if (await exists(filePath)) {
+      return true;
+    }
+
+    await delay(500);
+  }
+
+  return false;
 }
 
 async function executeSavedCommand(
+  store: WorkspaceStore,
   commandName: string,
   command: string
 ): Promise<{ success: boolean; exitCode: number | null; output: string; interactive: boolean }> {
-  if (commandNeedsInteractiveTerminal(command)) {
-    runCommandInWorkspaceTerminal(commandName, command);
+  const runsDirectory = path.join(store.paths.directory, ".command-runs");
+  await ensureDirectory(runsDirectory);
+
+  const runId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const scriptPath = path.join(runsDirectory, `${runId}.sh`);
+  const outputPath = path.join(runsDirectory, `${runId}.log`);
+  const statusPath = path.join(runsDirectory, `${runId}.status`);
+
+  const script = [
+    "#!/usr/bin/env bash",
+    "set -o pipefail",
+    "{",
+    command,
+    `} 2>&1 | tee ${shellQuote(outputPath)}`,
+    "rc=${PIPESTATUS[0]}",
+    `printf '%s' \"$rc\" > ${shellQuote(statusPath)}`
+  ].join("\n");
+
+  await writeTextFile(scriptPath, script);
+
+  const terminal = getWorkspaceTerminal();
+  terminal.show();
+  terminal.sendText(`bash ${shellQuote(scriptPath)}`, true);
+  vscode.window.showInformationMessage(t("runningControlCommand", { action: commandName }));
+
+  const finished = await waitForFile(statusPath, 30 * 60 * 1000);
+  if (!finished) {
+    await deleteFile(scriptPath).catch(() => undefined);
     return {
       success: true,
       exitCode: null,
@@ -788,26 +828,26 @@ async function executeSavedCommand(
     };
   }
 
-  return new Promise((resolve) => {
-    exec(
-      command,
-      {
-        shell: "/bin/bash",
-        timeout: 120000,
-        maxBuffer: 1024 * 1024
-      },
-      (error, stdout, stderr) => {
-        const output = [stdout, stderr].filter((value) => value && value.trim()).join("\n").trim();
-        const exitCode = typeof error === "object" && error && "code" in error && typeof error.code === "number" ? error.code : error ? 1 : 0;
-        resolve({
-          success: !error,
-          exitCode,
-          output,
-          interactive: false
-        });
-      }
-    );
-  });
+  const [exitCodeRaw, output] = await Promise.all([
+    readTextFile(statusPath).catch(() => ""),
+    readTextFile(outputPath).catch(() => "")
+  ]);
+
+  await Promise.all([
+    deleteFile(scriptPath).catch(() => undefined),
+    deleteFile(outputPath).catch(() => undefined),
+    deleteFile(statusPath).catch(() => undefined)
+  ]);
+
+  const exitCode = Number.parseInt(exitCodeRaw.trim(), 10);
+  const success = Number.isFinite(exitCode) ? exitCode === 0 : false;
+
+  return {
+    success,
+    exitCode: Number.isFinite(exitCode) ? exitCode : null,
+    output: output.trim(),
+    interactive: false
+  };
 }
 
 export async function runSavedCommand(store: WorkspaceStore, views: RefreshableViews, input?: unknown): Promise<void> {
@@ -823,7 +863,7 @@ export async function runSavedCommand(store: WorkspaceStore, views: RefreshableV
   }
 
   const startedAt = toLocalIsoString();
-  const result = await executeSavedCommand(loaded.savedCommand.name, loaded.savedCommand.command);
+  const result = await executeSavedCommand(store, loaded.savedCommand.name, loaded.savedCommand.command);
   const finishedAt = toLocalIsoString();
 
   store.addSavedCommandRun(loaded.data, {

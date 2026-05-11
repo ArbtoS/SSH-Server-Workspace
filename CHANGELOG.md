@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## 0.4.1
+
+- Global saved commands now run visibly in the integrated terminal again.
+- sudo commands from the saved-command list can prompt for a password interactively.
+- Saved-command output history is now captured from terminal-backed run files instead of the previous non-interactive exec path.
+
 ## 0.4.0
 
 - Removed the obsolete SYSTEMSTATUS.md workflow and aligned notes/workspace storage around NOTIZEN.md, standalone note files, and workspace-data.json.
