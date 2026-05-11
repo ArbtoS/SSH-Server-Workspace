@@ -572,7 +572,11 @@ export async function runExtraCommand(store: WorkspaceStore, input?: unknown): P
   vscode.window.showInformationMessage(t("runningControlCommand", { action: extraCommand.label }));
 }
 
-function getWorkspaceTerminal(): vscode.Terminal {
+function getWorkspaceTerminal(preferActive = false): vscode.Terminal {
+  if (preferActive && vscode.window.activeTerminal) {
+    return vscode.window.activeTerminal;
+  }
+
   const terminalName = "SSH Workspace";
   return vscode.window.terminals.find((item) => item.name === terminalName) || vscode.window.createTerminal(terminalName);
 }
@@ -809,7 +813,7 @@ async function executeSavedCommand(
 
   await writeTextFile(scriptPath, script);
 
-  const terminal = getWorkspaceTerminal();
+  const terminal = getWorkspaceTerminal(true);
   terminal.show();
   terminal.sendText(`bash ${shellQuote(scriptPath)}`, true);
   vscode.window.showInformationMessage(t("runningControlCommand", { action: commandName }));
@@ -888,4 +892,5 @@ export async function runSavedCommand(store: WorkspaceStore, views: RefreshableV
     vscode.window.showWarningMessage(t("savedCommandRunFailed", { name: loaded.savedCommand.name }));
   }
 }
+
 

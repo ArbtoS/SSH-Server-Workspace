@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## 0.4.3
+
+- Saved commands now prefer the currently active terminal before falling back to the dedicated SSH Workspace terminal.
+- This allows running stored commands inside an already switched user context instead of always using the default terminal session.
+
 ## 0.4.2
 
 - Switched saved-command capture from a tee pipeline to script(1) so terminal-visible command runs keep an interactive TTY for sudo password prompts.
